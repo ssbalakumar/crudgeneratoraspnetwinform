@@ -23,6 +23,7 @@ namespace CrudGenerator {
         /// the contents of this method with the code editor.
         /// </summary>
         private void InitializeComponent() {
+            this.components = new System.ComponentModel.Container();
             this.label1 = new System.Windows.Forms.Label();
             this.label2 = new System.Windows.Forms.Label();
             this.label3 = new System.Windows.Forms.Label();
@@ -50,6 +51,8 @@ namespace CrudGenerator {
             this.txtUser = new System.Windows.Forms.TextBox();
             this.lblPassword = new System.Windows.Forms.Label();
             this.txtPassword = new System.Windows.Forms.TextBox();
+            this.chBxDropIfExists = new System.Windows.Forms.CheckBox();
+            this.toolTip1 = new System.Windows.Forms.ToolTip(this.components);
             this.groupBox1Authentication.SuspendLayout();
             this.SuspendLayout();
             // 
@@ -85,21 +88,21 @@ namespace CrudGenerator {
             this.txtServer.Location = new System.Drawing.Point(75, 6);
             this.txtServer.Name = "txtServer";
             this.txtServer.Size = new System.Drawing.Size(100, 20);
-            this.txtServer.TabIndex = 14;
+            this.txtServer.TabIndex = 1;
             // 
             // txtDatabase
             // 
             this.txtDatabase.Location = new System.Drawing.Point(75, 33);
             this.txtDatabase.Name = "txtDatabase";
             this.txtDatabase.Size = new System.Drawing.Size(100, 20);
-            this.txtDatabase.TabIndex = 1;
+            this.txtDatabase.TabIndex = 2;
             // 
             // txtTableName
             // 
             this.txtTableName.Location = new System.Drawing.Point(75, 195);
             this.txtTableName.Name = "txtTableName";
             this.txtTableName.Size = new System.Drawing.Size(100, 20);
-            this.txtTableName.TabIndex = 2;
+            this.txtTableName.TabIndex = 5;
             this.txtTableName.Text = "%";
             // 
             // button1
@@ -107,7 +110,7 @@ namespace CrudGenerator {
             this.button1.Location = new System.Drawing.Point(16, 353);
             this.button1.Name = "button1";
             this.button1.Size = new System.Drawing.Size(163, 41);
-            this.button1.TabIndex = 11;
+            this.button1.TabIndex = 14;
             this.button1.Text = "Make Stored Procedures";
             this.button1.UseVisualStyleBackColor = true;
             this.button1.Click += new System.EventHandler(this.button1_Click);
@@ -126,7 +129,7 @@ namespace CrudGenerator {
             this.txtAuthor.Location = new System.Drawing.Point(75, 221);
             this.txtAuthor.Name = "txtAuthor";
             this.txtAuthor.Size = new System.Drawing.Size(100, 20);
-            this.txtAuthor.TabIndex = 3;
+            this.txtAuthor.TabIndex = 6;
             // 
             // txtSuccessLog
             // 
@@ -135,7 +138,7 @@ namespace CrudGenerator {
             this.txtSuccessLog.Name = "txtSuccessLog";
             this.txtSuccessLog.ScrollBars = System.Windows.Forms.ScrollBars.Vertical;
             this.txtSuccessLog.Size = new System.Drawing.Size(740, 376);
-            this.txtSuccessLog.TabIndex = 12;
+            this.txtSuccessLog.TabIndex = 16;
             // 
             // label5
             // 
@@ -154,7 +157,7 @@ namespace CrudGenerator {
             this.chkCreate.Location = new System.Drawing.Point(15, 247);
             this.chkCreate.Name = "chkCreate";
             this.chkCreate.Size = new System.Drawing.Size(57, 17);
-            this.chkCreate.TabIndex = 4;
+            this.chkCreate.TabIndex = 7;
             this.chkCreate.Text = "Create";
             this.chkCreate.UseVisualStyleBackColor = true;
             // 
@@ -166,7 +169,7 @@ namespace CrudGenerator {
             this.chkUpdate.Location = new System.Drawing.Point(97, 247);
             this.chkUpdate.Name = "chkUpdate";
             this.chkUpdate.Size = new System.Drawing.Size(61, 17);
-            this.chkUpdate.TabIndex = 5;
+            this.chkUpdate.TabIndex = 8;
             this.chkUpdate.Text = "Update";
             this.chkUpdate.UseVisualStyleBackColor = true;
             // 
@@ -178,7 +181,7 @@ namespace CrudGenerator {
             this.chkReadById.Location = new System.Drawing.Point(15, 270);
             this.chkReadById.Name = "chkReadById";
             this.chkReadById.Size = new System.Drawing.Size(73, 17);
-            this.chkReadById.TabIndex = 6;
+            this.chkReadById.TabIndex = 9;
             this.chkReadById.Text = "ReadById";
             this.chkReadById.UseVisualStyleBackColor = true;
             // 
@@ -190,7 +193,7 @@ namespace CrudGenerator {
             this.chkReadAll.Location = new System.Drawing.Point(97, 270);
             this.chkReadAll.Name = "chkReadAll";
             this.chkReadAll.Size = new System.Drawing.Size(63, 17);
-            this.chkReadAll.TabIndex = 7;
+            this.chkReadAll.TabIndex = 10;
             this.chkReadAll.Text = "ReadAll";
             this.chkReadAll.UseVisualStyleBackColor = true;
             // 
@@ -202,7 +205,7 @@ namespace CrudGenerator {
             this.chkDelete.Location = new System.Drawing.Point(15, 293);
             this.chkDelete.Name = "chkDelete";
             this.chkDelete.Size = new System.Drawing.Size(57, 17);
-            this.chkDelete.TabIndex = 8;
+            this.chkDelete.TabIndex = 11;
             this.chkDelete.Text = "Delete";
             this.chkDelete.UseVisualStyleBackColor = true;
             // 
@@ -212,7 +215,7 @@ namespace CrudGenerator {
             this.chkDeactivate.Location = new System.Drawing.Point(97, 293);
             this.chkDeactivate.Name = "chkDeactivate";
             this.chkDeactivate.Size = new System.Drawing.Size(78, 17);
-            this.chkDeactivate.TabIndex = 9;
+            this.chkDeactivate.TabIndex = 12;
             this.chkDeactivate.Text = "Deactivate";
             this.chkDeactivate.UseVisualStyleBackColor = true;
             // 
@@ -222,7 +225,7 @@ namespace CrudGenerator {
             this.label6.Location = new System.Drawing.Point(13, 325);
             this.label6.Name = "label6";
             this.label6.Size = new System.Drawing.Size(73, 13);
-            this.label6.TabIndex = 9;
+            this.label6.TabIndex = 13;
             this.label6.Text = "IsActive Field:";
             // 
             // txtIsActive
@@ -230,7 +233,7 @@ namespace CrudGenerator {
             this.txtIsActive.Location = new System.Drawing.Point(92, 322);
             this.txtIsActive.Name = "txtIsActive";
             this.txtIsActive.Size = new System.Drawing.Size(83, 20);
-            this.txtIsActive.TabIndex = 10;
+            this.txtIsActive.TabIndex = 13;
             this.txtIsActive.Text = "IsActive";
             // 
             // txtErrorLog
@@ -240,7 +243,7 @@ namespace CrudGenerator {
             this.txtErrorLog.Name = "txtErrorLog";
             this.txtErrorLog.ScrollBars = System.Windows.Forms.ScrollBars.Vertical;
             this.txtErrorLog.Size = new System.Drawing.Size(740, 387);
-            this.txtErrorLog.TabIndex = 13;
+            this.txtErrorLog.TabIndex = 17;
             // 
             // label8
             // 
@@ -256,10 +259,10 @@ namespace CrudGenerator {
             this.checkBox1.AutoSize = true;
             this.checkBox1.Checked = true;
             this.checkBox1.CheckState = System.Windows.Forms.CheckState.Checked;
-            this.checkBox1.Location = new System.Drawing.Point(16, 68);
+            this.checkBox1.Location = new System.Drawing.Point(15, 68);
             this.checkBox1.Name = "checkBox1";
             this.checkBox1.Size = new System.Drawing.Size(119, 17);
-            this.checkBox1.TabIndex = 15;
+            this.checkBox1.TabIndex = 3;
             this.checkBox1.Text = "Trusted Connection";
             this.checkBox1.UseVisualStyleBackColor = true;
             this.checkBox1.CheckedChanged += new System.EventHandler(this.checkBox1_CheckedChanged);
@@ -273,7 +276,7 @@ namespace CrudGenerator {
             this.groupBox1Authentication.Location = new System.Drawing.Point(4, 91);
             this.groupBox1Authentication.Name = "groupBox1Authentication";
             this.groupBox1Authentication.Size = new System.Drawing.Size(170, 97);
-            this.groupBox1Authentication.TabIndex = 21;
+            this.groupBox1Authentication.TabIndex = 4;
             this.groupBox1Authentication.TabStop = false;
             this.groupBox1Authentication.Text = "Authentication";
             this.groupBox1Authentication.Visible = false;
@@ -292,7 +295,7 @@ namespace CrudGenerator {
             this.txtUser.Location = new System.Drawing.Point(66, 19);
             this.txtUser.Name = "txtUser";
             this.txtUser.Size = new System.Drawing.Size(100, 20);
-            this.txtUser.TabIndex = 23;
+            this.txtUser.TabIndex = 2;
             // 
             // lblPassword
             // 
@@ -309,13 +312,27 @@ namespace CrudGenerator {
             this.txtPassword.Name = "txtPassword";
             this.txtPassword.PasswordChar = '*';
             this.txtPassword.Size = new System.Drawing.Size(100, 20);
-            this.txtPassword.TabIndex = 22;
+            this.txtPassword.TabIndex = 3;
+            // 
+            // chBxDropIfExists
+            // 
+            this.chBxDropIfExists.AutoSize = true;
+            this.chBxDropIfExists.Checked = true;
+            this.chBxDropIfExists.CheckState = System.Windows.Forms.CheckState.Checked;
+            this.chBxDropIfExists.Location = new System.Drawing.Point(15, 406);
+            this.chBxDropIfExists.Name = "chBxDropIfExists";
+            this.chBxDropIfExists.Size = new System.Drawing.Size(86, 17);
+            this.chBxDropIfExists.TabIndex = 15;
+            this.chBxDropIfExists.Text = "Drop if exists";
+            this.toolTip1.SetToolTip(this.chBxDropIfExists, "Adds drop if exists statements if");
+            this.chBxDropIfExists.UseVisualStyleBackColor = true;
             // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(934, 812);
+            this.Controls.Add(this.chBxDropIfExists);
             this.Controls.Add(this.groupBox1Authentication);
             this.Controls.Add(this.checkBox1);
             this.Controls.Add(this.label6);
@@ -378,6 +395,8 @@ namespace CrudGenerator {
         private System.Windows.Forms.TextBox txtUser;
         private System.Windows.Forms.Label lblPassword;
         private System.Windows.Forms.TextBox txtPassword;
+        private System.Windows.Forms.CheckBox chBxDropIfExists;
+        private System.Windows.Forms.ToolTip toolTip1;
     }
 }
 

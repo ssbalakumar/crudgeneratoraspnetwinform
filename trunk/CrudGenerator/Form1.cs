@@ -79,8 +79,9 @@ namespace CrudGenerator {
         #region Make Stored Procedures BUTTON
         private void button1_Click(object sender, EventArgs e) {
             string server = this.txtServer.Text, database = this.txtDatabase.Text, userName = this.txtUser.Text, passWord = this.txtPassword.Text;
+            bool dropIfExists = this.chBxDropIfExists.Checked;
             if (server.Length > 0 && database.Length > 0) {
-                if (checkBox1.Checked)
+                if (!checkBox1.Checked)
                     ConnectionString = "Server=" + server + ";Database=" + database + ";uid=" + txtUser.Text + ";pwd=" + txtPassword.Text + ";";
                 else
                     ConnectionString = "Server=" + server + ";Database=" + database + ";Trusted_Connection=True;";
@@ -90,6 +91,7 @@ namespace CrudGenerator {
                 string errors = "";
                 SuccessLog = new StringBuilder();
                 ErrorLog = new StringBuilder();
+
                 foreach (Table table in tables) {
                     table.Author = this.txtAuthor.Text;
                     table.IsActive = this.txtIsActive.Text;
@@ -97,17 +99,17 @@ namespace CrudGenerator {
                     string errorLine = "";
                     
                     if (this.chkCreate.Checked)
-                        errorLine = errorLine + Execute(table.GenerateCreate(), "Create");
-                    if (this.chkDelete.Checked) 
-                        errorLine = errorLine + Execute(table.GenerateDelete(), "Delete");
-                    if (this.chkUpdate.Checked) 
-                        errorLine = errorLine + Execute(table.GenerateUpdate(), "Update");
-                    if (this.chkReadAll.Checked) 
-                        errorLine = errorLine + Execute(table.GenerateSelectAll(), "ReadAll");
+                        errorLine = errorLine + Execute(table.GenerateCreate(dropIfExists), "Create");
+                    if (this.chkDelete.Checked)
+                        errorLine = errorLine + Execute(table.GenerateDelete(dropIfExists), "Delete");
+                    if (this.chkUpdate.Checked)
+                        errorLine = errorLine + Execute(table.GenerateUpdate(dropIfExists), "Update");
+                    if (this.chkReadAll.Checked)
+                        errorLine = errorLine + Execute(table.GenerateSelectAll(dropIfExists), "ReadAll");
                     if (this.chkReadById.Checked)
-                        errorLine = errorLine + Execute(table.GenerateSelectById(), "ReadById");
+                        errorLine = errorLine + Execute(table.GenerateSelectById(dropIfExists), "ReadById");
                     if (this.chkDeactivate.Checked)
-                        errorLine = errorLine + Execute(table.GenerateDeactiveate(), "Deactivate");
+                        errorLine = errorLine + Execute(table.GenerateDeactiveate(dropIfExists), "Deactivate");
 
                     if (errorLine.Length > 0) {
                         if (errors.Length > 0)
@@ -134,9 +136,9 @@ namespace CrudGenerator {
         private void checkBox1_CheckedChanged(object sender, EventArgs e)
         {
             if (checkBox1.Checked == true)
-                groupBox1Authentication.Visible = true;
-            else
                 groupBox1Authentication.Visible = false;
+            else
+                groupBox1Authentication.Visible = true;
 
         }
 

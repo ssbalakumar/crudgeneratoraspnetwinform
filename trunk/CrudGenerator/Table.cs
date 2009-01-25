@@ -93,8 +93,10 @@ namespace CrudGenerator {
         #endregion
 
         #region CRUD Methods
-        internal string GenerateSelectById() {
+        internal string GenerateSelectById(bool dropIfExists)
+        {
             StringBuilder sb = new StringBuilder(2000);
+            if (dropIfExists) WriteDropIfExists(sb, "_ReadById", "");
             WriteComments(sb);
             sb.Append("Create Procedure ");
             sb.Append(this.tableName);
@@ -117,8 +119,10 @@ namespace CrudGenerator {
             return sb.ToString();
         }
 
-        internal string GenerateSelectAll() {
+        internal string GenerateSelectAll(bool dropIfExists)
+        {
             StringBuilder sb = new StringBuilder(2000);
+            if (dropIfExists) WriteDropIfExists(sb, "_ReadAll", "");
             WriteComments(sb);
             sb.Append("Create Procedure ");
             sb.Append(this.tableName);
@@ -135,8 +139,12 @@ namespace CrudGenerator {
 
             return sb.ToString();
         }
-        internal string GenerateUpdate() {
+
+
+        internal string GenerateUpdate(bool dropIfExists)
+        {
             StringBuilder sb = new StringBuilder(2000);
+            if (dropIfExists) WriteDropIfExists(sb, "_Update", "");
             WriteComments(sb);
             sb.Append("Create Procedure ");
             sb.Append(this.tableName);
@@ -171,8 +179,10 @@ namespace CrudGenerator {
             return sb.ToString();
         }
 
-        internal string GenerateDelete() {
+        internal string GenerateDelete(bool dropIfExists)
+        {
             StringBuilder sb = new StringBuilder(2000);
+            if (dropIfExists) WriteDropIfExists(sb, "_Delete", "");
             WriteComments(sb);
             sb.Append("Create Procedure ");
             sb.Append(this.tableName);
@@ -191,8 +201,9 @@ namespace CrudGenerator {
             return sb.ToString();
         }
 
-        internal string GenerateCreate() {
+        internal string GenerateCreate(bool dropIfExists) {
             StringBuilder sb = new StringBuilder(2000);
+            if (dropIfExists) WriteDropIfExists(sb, "_Create", "");
             WriteComments(sb);
             sb.Append("Create Procedure ");
             sb.Append(this.tableName);
@@ -236,8 +247,10 @@ namespace CrudGenerator {
 
             return sb.ToString();
         }
-        internal string GenerateDeactiveate() {
+        internal string GenerateDeactiveate(bool dropIfExists)
+        {
             StringBuilder sb = new StringBuilder(2000);
+            if (dropIfExists) WriteDropIfExists(sb, "_Deactivate", "");
             WriteComments(sb);
             sb.Append("Create Procedure ");
             sb.Append(this.tableName);
@@ -263,6 +276,19 @@ namespace CrudGenerator {
         #endregion
 
         #region CRUD - Common Code Methods
+
+        /// <summary>generates a drop if exists statment with a Go statement.  of the format [preFix][tableName][postFix]
+        /// </summary>
+        private string WriteDropIfExists(StringBuilder sb,
+            string postFix, string preFix)
+        {
+            string result = "Go \r\n if object_id('" + preFix + tableName + postFix + "', 'P') is not null \r\n";
+            result += "\t drop proc " + preFix + tableName + postFix + " \r\n Go \r\n";
+
+            sb.Append(result);
+            return sb.ToString();
+        }
+
         private void WriteComments(StringBuilder sb) {
             sb.Append("-- =============================================");
             sb.Append("\r\n-- Author:\t\t");

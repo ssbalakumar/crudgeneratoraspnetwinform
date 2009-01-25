@@ -3,6 +3,10 @@ using System.Collections.Generic;
 using System.Data;
 using System.Data.SqlClient;
 using System.Text;
+//Microsoft.SqlServer.Smo.dll
+//using Microsoft.SqlServer.Management.Smo;
+////Microsoft.SqlServer.ConnectionInfo.dll
+//using Microsoft.SqlServer.Management.Common;
 
 namespace CrudGenerator {
     public class CrudDAC : IDisposable {
@@ -45,7 +49,7 @@ namespace CrudGenerator {
                 "       inner JOIN INFORMATION_SCHEMA.KEY_COLUMN_USAGE k ON k.table_name = c.table_name AND k.table_schema = c.table_schema AND k.table_catalog = c.table_catalog AND k.constraint_catalog = c.constraint_catalog AND k.constraint_name = c.constraint_name" +
                 "       where constraint_type = 'PRIMARY KEY'" +
                 "   ) p on o.Name = p.Table_Name and c.Name = p.Column_Name" +
-                " where o.xtype='U' and o.name <> 'dtproperties' and o.name like '" + tableLike + "'" +
+                " where o.xtype='U' and o.name <> 'dtproperties' and t.name not in ('sysname','timestamp') and o.name like '" + tableLike + "'" +
                 " order by o.name,c.colorder";
 
             SqlCommand command = new SqlCommand(strSql, connection);
@@ -54,8 +58,22 @@ namespace CrudGenerator {
             adapter.Fill(ds);
             return ds.Tables[0];
         }
-
+        
         internal void Execute(string sql) {
+            string[] strList = sql.Split(new string[] {" Go "}, StringSplitOptions.None);
+            
+            foreach (string s in strList)
+                ExecuteBatch(s);
+
+            //SqlCommand command = new SqlCommand(sql, connection);
+            //command.ExecuteNonQuery();
+        }
+
+        private void ExecuteBatch(string sql) {
+
+            if (sql.Substring(0, 3) == "Go ")
+                sql = sql.Substring(3);
+
             SqlCommand command = new SqlCommand(sql, connection);
             command.ExecuteNonQuery();
         }
