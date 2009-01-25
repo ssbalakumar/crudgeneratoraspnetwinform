@@ -74,7 +74,7 @@ namespace CrudGenerator {
             // label3
             // 
             this.label3.AutoSize = true;
-            this.label3.Location = new System.Drawing.Point(12, 226);
+            this.label3.Location = new System.Drawing.Point(12, 198);
             this.label3.Name = "label3";
             this.label3.Size = new System.Drawing.Size(57, 13);
             this.label3.TabIndex = 2;
@@ -96,7 +96,7 @@ namespace CrudGenerator {
             // 
             // txtTableName
             // 
-            this.txtTableName.Location = new System.Drawing.Point(75, 223);
+            this.txtTableName.Location = new System.Drawing.Point(75, 195);
             this.txtTableName.Name = "txtTableName";
             this.txtTableName.Size = new System.Drawing.Size(100, 20);
             this.txtTableName.TabIndex = 2;
@@ -104,7 +104,7 @@ namespace CrudGenerator {
             // 
             // button1
             // 
-            this.button1.Location = new System.Drawing.Point(16, 428);
+            this.button1.Location = new System.Drawing.Point(16, 353);
             this.button1.Name = "button1";
             this.button1.Size = new System.Drawing.Size(163, 41);
             this.button1.TabIndex = 11;
@@ -115,7 +115,7 @@ namespace CrudGenerator {
             // label4
             // 
             this.label4.AutoSize = true;
-            this.label4.Location = new System.Drawing.Point(12, 252);
+            this.label4.Location = new System.Drawing.Point(12, 224);
             this.label4.Name = "label4";
             this.label4.Size = new System.Drawing.Size(38, 13);
             this.label4.TabIndex = 2;
@@ -123,7 +123,7 @@ namespace CrudGenerator {
             // 
             // txtAuthor
             // 
-            this.txtAuthor.Location = new System.Drawing.Point(75, 249);
+            this.txtAuthor.Location = new System.Drawing.Point(75, 221);
             this.txtAuthor.Name = "txtAuthor";
             this.txtAuthor.Size = new System.Drawing.Size(100, 20);
             this.txtAuthor.TabIndex = 3;
@@ -151,7 +151,7 @@ namespace CrudGenerator {
             this.chkCreate.AutoSize = true;
             this.chkCreate.Checked = true;
             this.chkCreate.CheckState = System.Windows.Forms.CheckState.Checked;
-            this.chkCreate.Location = new System.Drawing.Point(15, 275);
+            this.chkCreate.Location = new System.Drawing.Point(15, 247);
             this.chkCreate.Name = "chkCreate";
             this.chkCreate.Size = new System.Drawing.Size(57, 17);
             this.chkCreate.TabIndex = 4;
@@ -163,7 +163,7 @@ namespace CrudGenerator {
             this.chkUpdate.AutoSize = true;
             this.chkUpdate.Checked = true;
             this.chkUpdate.CheckState = System.Windows.Forms.CheckState.Checked;
-            this.chkUpdate.Location = new System.Drawing.Point(97, 275);
+            this.chkUpdate.Location = new System.Drawing.Point(97, 247);
             this.chkUpdate.Name = "chkUpdate";
             this.chkUpdate.Size = new System.Drawing.Size(61, 17);
             this.chkUpdate.TabIndex = 5;
@@ -175,7 +175,7 @@ namespace CrudGenerator {
             this.chkReadById.AutoSize = true;
             this.chkReadById.Checked = true;
             this.chkReadById.CheckState = System.Windows.Forms.CheckState.Checked;
-            this.chkReadById.Location = new System.Drawing.Point(15, 298);
+            this.chkReadById.Location = new System.Drawing.Point(15, 270);
             this.chkReadById.Name = "chkReadById";
             this.chkReadById.Size = new System.Drawing.Size(73, 17);
             this.chkReadById.TabIndex = 6;
@@ -187,7 +187,7 @@ namespace CrudGenerator {
             this.chkReadAll.AutoSize = true;
             this.chkReadAll.Checked = true;
             this.chkReadAll.CheckState = System.Windows.Forms.CheckState.Checked;
-            this.chkReadAll.Location = new System.Drawing.Point(97, 298);
+            this.chkReadAll.Location = new System.Drawing.Point(97, 270);
             this.chkReadAll.Name = "chkReadAll";
             this.chkReadAll.Size = new System.Drawing.Size(63, 17);
             this.chkReadAll.TabIndex = 7;
@@ -199,7 +199,7 @@ namespace CrudGenerator {
             this.chkDelete.AutoSize = true;
             this.chkDelete.Checked = true;
             this.chkDelete.CheckState = System.Windows.Forms.CheckState.Checked;
-            this.chkDelete.Location = new System.Drawing.Point(15, 321);
+            this.chkDelete.Location = new System.Drawing.Point(15, 293);
             this.chkDelete.Name = "chkDelete";
             this.chkDelete.Size = new System.Drawing.Size(57, 17);
             this.chkDelete.TabIndex = 8;
@@ -209,7 +209,7 @@ namespace CrudGenerator {
             // chkDeactivate
             // 
             this.chkDeactivate.AutoSize = true;
-            this.chkDeactivate.Location = new System.Drawing.Point(97, 321);
+            this.chkDeactivate.Location = new System.Drawing.Point(97, 293);
             this.chkDeactivate.Name = "chkDeactivate";
             this.chkDeactivate.Size = new System.Drawing.Size(78, 17);
             this.chkDeactivate.TabIndex = 9;
@@ -219,7 +219,7 @@ namespace CrudGenerator {
             // label6
             // 
             this.label6.AutoSize = true;
-            this.label6.Location = new System.Drawing.Point(13, 385);
+            this.label6.Location = new System.Drawing.Point(13, 325);
             this.label6.Name = "label6";
             this.label6.Size = new System.Drawing.Size(73, 13);
             this.label6.TabIndex = 9;
@@ -227,7 +227,7 @@ namespace CrudGenerator {
             // 
             // txtIsActive
             // 
-            this.txtIsActive.Location = new System.Drawing.Point(92, 382);
+            this.txtIsActive.Location = new System.Drawing.Point(92, 322);
             this.txtIsActive.Name = "txtIsActive";
             this.txtIsActive.Size = new System.Drawing.Size(83, 20);
             this.txtIsActive.TabIndex = 10;
