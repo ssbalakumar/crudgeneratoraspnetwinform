@@ -1,0 +1,22 @@
+#summary SQL Server CRUD Stored Procedure (SPROC) Generator.
+
+= Introduction =
+
+This WINFORM CRUD SPROC Generator built using Visual Studio 2008.
+
+
+= Details =
+
+This tool will automatically create stored procedures to handle common data manipulation:
+  # *C* r e a t e
+  # *R* e a d 
+  # *U* p d a te
+  # *D* e l e t e
+
+
+Initially downloaded from http://www.codeproject.com/KB/database/CRUD_Generator.aspx
+
+What then added:
+  * The ability to provide usernames and passwords so as to connect to remote database.
+  * A checkbox to run drop if exists clauses on stored procedures
+  * Tweaked the query which returns the list of columns in tables so as to exclude timestamp columns and better handle nvarchar columns.
