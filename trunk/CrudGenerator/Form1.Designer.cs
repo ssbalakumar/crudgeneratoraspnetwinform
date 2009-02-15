@@ -130,6 +130,7 @@ namespace CrudGenerator {
             this.txtAuthor.Name = "txtAuthor";
             this.txtAuthor.Size = new System.Drawing.Size(100, 20);
             this.txtAuthor.TabIndex = 6;
+            this.toolTip1.SetToolTip(this.txtAuthor, "Shows up in the comment above a stored procedure ");
             // 
             // txtSuccessLog
             // 
@@ -317,14 +318,13 @@ namespace CrudGenerator {
             // chBxDropIfExists
             // 
             this.chBxDropIfExists.AutoSize = true;
-            this.chBxDropIfExists.Checked = true;
-            this.chBxDropIfExists.CheckState = System.Windows.Forms.CheckState.Checked;
             this.chBxDropIfExists.Location = new System.Drawing.Point(15, 406);
             this.chBxDropIfExists.Name = "chBxDropIfExists";
             this.chBxDropIfExists.Size = new System.Drawing.Size(86, 17);
             this.chBxDropIfExists.TabIndex = 15;
             this.chBxDropIfExists.Text = "Drop if exists";
-            this.toolTip1.SetToolTip(this.chBxDropIfExists, "Adds drop if exists statements if");
+            this.toolTip1.SetToolTip(this.chBxDropIfExists, "Adds drop if exists statements if.  Turn this on only if you are sure you will no" +
+                    "t over-write your own customizations.");
             this.chBxDropIfExists.UseVisualStyleBackColor = true;
             // 
             // Form1
