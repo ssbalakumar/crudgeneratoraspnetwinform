@@ -1,0 +1,16 @@
+#summary Changelog for changes in the working copy
+
+= Introduction =
+
+As I make some changes and assumptions, I will add them here.
+
+
+= Details =
+
+==SPROC CRUD GENERATOR==
+ * The generate drop if exists checkbox is now off by default - since it might overwrite customized content.
+=== TODO ===
+ * create a checkbox option to have the script generate sql scripts without actually executing them.
+ * add a stored procedure prefix textbox
+
+==C# CRUD GENERATOR==
