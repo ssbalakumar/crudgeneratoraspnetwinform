@@ -98,6 +98,8 @@
       <DesignTimeSharedInput>True</DesignTimeSharedInput>
     </Compile>
     <Compile Include="Table.cs" />
+    <Compile Include="Util\SettingsData.cs" />
+    <Compile Include="Util\UserSettings.cs" />
   </ItemGroup>
   <ItemGroup>
     <BootstrapperPackage Include="Microsoft.Net.Client.3.5">
