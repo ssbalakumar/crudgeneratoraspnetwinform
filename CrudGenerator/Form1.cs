@@ -16,6 +16,7 @@ namespace CrudGenerator {
         #region Member Variables
         string ConnectionString;
         StringBuilder ErrorLog, SuccessLog;
+        bool VBCodeWebSiteLoaded ;
         #endregion
 
         #region Form Load / Constructor
@@ -81,7 +82,7 @@ namespace CrudGenerator {
             string server = this.txtServer.Text, database = this.txtDatabase.Text, userName = this.txtUser.Text, passWord = this.txtPassword.Text;
             bool dropIfExists = this.chBxDropIfExists.Checked;
             if (server.Length > 0 && database.Length > 0) {
-                if (!checkBox1.Checked)
+                if (!checkBox1TrustedConnection.Checked)
                     ConnectionString = "Server=" + server + ";Database=" + database + ";uid=" + txtUser.Text + ";pwd=" + txtPassword.Text + ";";
                 else
                     ConnectionString = "Server=" + server + ";Database=" + database + ";Trusted_Connection=True;";
@@ -135,12 +136,91 @@ namespace CrudGenerator {
 
         private void checkBox1_CheckedChanged(object sender, EventArgs e)
         {
-            if (checkBox1.Checked == true)
+            if (checkBox1TrustedConnection.Checked == true)
                 groupBox1Authentication.Visible = false;
             else
                 groupBox1Authentication.Visible = true;
 
         }
+
+        private void tabControl1_Selected(object sender, TabControlEventArgs e)
+        {
+            if (tabControl1.SelectedTab.Name == "tabPage3VBCode" && !VBCodeWebSiteLoaded)
+            {
+                webBrowser1VBCode.Url = new Uri("http://code.google.com/p/crudgeneratoraspnetwinform/wiki/VBCodeGenerator");
+                VBCodeWebSiteLoaded = true;
+            }
+        }
+
+        private void exitToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            if (MessageBox.Show("Are you sure you want to quit?  Budy old pal?","Quit?", MessageBoxButtons.YesNo) == DialogResult.Yes )
+                Application.Exit();
+        }
+
+   
+
+        private void button2SelectFolder_Click(object sender, EventArgs e)
+        {
+            
+            if (folderBrowserDialog1.ShowDialog() == DialogResult.OK )
+            {
+                txtOutputDirectory.Text = folderBrowserDialog1.SelectedPath;
+
+            }
+            
+        }
+
+        
+
+        private void toolStripTextBox1SessionName_KeyDown(object sender, KeyEventArgs e)
+        {
+            if (e.KeyCode == Keys.Enter)
+            {
+                SaveSession(toolStripTextBox1SessionName.Text);
+                fileToolStripMenuItem.DropDown.Close();
+            }
+
+        }
+
+        private  void SaveSession(string sessionName) {
+
+            if (string.IsNullOrEmpty(sessionName))
+            {
+                MessageBox.Show("The save as name should not be blank");
+                return;
+            }
+            Util.SettingsData s = new CrudGenerator.Util.SettingsData(
+                sessionName,  txtNamespace.Text, txtSprocPrefix.Text,
+                txtAuthor.Text,txtServer.Text,txtDatabase.Text,
+                checkBox1TrustedConnection.Checked, 
+                txtUser.Text, txtPassword.Text, txtOutputDirectory.Text,
+                txtTableName.Text, chBxDropIfExists.Checked, 
+                chkCreate.Checked, chkReadById.Checked, chkReadAll.Checked,
+                chkUpdate.Checked, chkDelete.Checked, chkDeactivate.Checked,
+                txtIsActive.Text);
+            
+            s.SaveSettings();
+            
+        }
+
+        private void loadSessionToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            Util.SettingsData s = (new Util.SettingsData()).LoadSettings();
+            
+
+            txtDatabase.Text = s.DbName;
+            txtServer.Text = s.ServerName;
+            txtOutputDirectory.Text = s.OutputDirectory;
+            chBxDropIfExists.Checked = s.TrustedConnection;
+            txtTableName.Text=s.TableNameFilter ;
+            txtUser.Text = s.DbUsername;
+            txtPassword.Text = s.DbPassword;
+            txtAuthor.Text = s.AuthorName;
+
+        }
+
+     
 
   
     }
