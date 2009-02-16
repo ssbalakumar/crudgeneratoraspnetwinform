@@ -2,7 +2,7 @@
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProductVersion>9.0.30729</ProductVersion>
+    <ProductVersion>9.0.21022</ProductVersion>
     <SchemaVersion>2.0</SchemaVersion>
     <ProjectGuid>{075954DB-9DB0-4FB2-BBEF-F41DE49CFCBA}</ProjectGuid>
     <OutputType>WinExe</OutputType>
@@ -97,7 +97,7 @@
       <DependentUpon>Settings.settings</DependentUpon>
       <DesignTimeSharedInput>True</DesignTimeSharedInput>
     </Compile>
-    <Compile Include="Table.cs" />
+    <Compile Include="GenSPROC.cs" />
     <Compile Include="Util\SettingsData.cs" />
     <Compile Include="Util\UserSettings.cs" />
   </ItemGroup>

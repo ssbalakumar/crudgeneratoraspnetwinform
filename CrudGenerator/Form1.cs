@@ -88,12 +88,12 @@ namespace CrudGenerator {
                     ConnectionString = "Server=" + server + ";Database=" + database + ";Trusted_Connection=True;";
 
                 DataTable dt = GetColumns();
-                List<Table> tables = Table.ParseDataTable(dt);
+                List<GenSPROC> tables = GenSPROC.ParseDataTable(dt);
                 string errors = "";
                 SuccessLog = new StringBuilder();
                 ErrorLog = new StringBuilder();
 
-                foreach (Table table in tables) {
+                foreach (GenSPROC table in tables) {
                     table.Author = this.txtAuthor.Text;
                     table.IsActive = this.txtIsActive.Text;
 
