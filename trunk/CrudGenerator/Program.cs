@@ -6,6 +6,7 @@ namespace CrudGenerator {
     static class Program {
         /// <summary>
         /// The main entry point for the application.
+        /// just testing something
         /// </summary>
         [STAThread]
         static void Main() {
