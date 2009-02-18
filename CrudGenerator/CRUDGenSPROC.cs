@@ -4,7 +4,7 @@ using System.Text;
 using System.Data;
 
 namespace CrudGenerator {
-    public class GenSPROC {
+    public class CrudGenSPROC {
         #region Member variables
         string tableName = string.Empty;
         string author = string.Empty;
@@ -70,12 +70,12 @@ namespace CrudGenerator {
         #endregion
 
         #region STATIC - Parse Table method
-        public static List<GenSPROC> ParseDataTable(DataTable dt) {
-            List<GenSPROC> tables = new List<GenSPROC>();
+        public static List<CrudGenSPROC> ParseDataTable(DataTable dt) {
+            List<CrudGenSPROC> tables = new List<CrudGenSPROC>();
             foreach (DataRow dr in dt.Rows) {
-                GenSPROC table;
+                CrudGenSPROC table;
                 if (tables.Count == 0 || tables[tables.Count - 1].TableName != dr["TableName"].ToString()) {
-                    table = new GenSPROC();
+                    table = new CrudGenSPROC();
                     table.TableName = dr["TableName"].ToString();
                     tables.Add(table);
                 } else {

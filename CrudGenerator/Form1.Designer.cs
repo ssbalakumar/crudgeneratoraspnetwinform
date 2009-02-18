@@ -58,6 +58,11 @@ namespace CrudGenerator {
             this.txtSuccessLog = new System.Windows.Forms.TextBox();
             this.label5 = new System.Windows.Forms.Label();
             this.tabPage2CSharp = new System.Windows.Forms.TabPage();
+            this.txtC_results = new System.Windows.Forms.TextBox();
+            this.lblC_Result = new System.Windows.Forms.Label();
+            this.label1 = new System.Windows.Forms.Label();
+            this.button3C_GenerateBL = new System.Windows.Forms.Button();
+            this.button2Generate = new System.Windows.Forms.Button();
             this.tabPage3VBCode = new System.Windows.Forms.TabPage();
             this.webBrowser1VBCode = new System.Windows.Forms.WebBrowser();
             this.label1AppTitle = new System.Windows.Forms.Label();
@@ -73,9 +78,6 @@ namespace CrudGenerator {
             this.txtNamespace = new System.Windows.Forms.TextBox();
             this.txtSprocPrefix = new System.Windows.Forms.TextBox();
             this.label2SprocPrefix = new System.Windows.Forms.Label();
-            this.button2Generate = new System.Windows.Forms.Button();
-            this.button3 = new System.Windows.Forms.Button();
-            this.label1 = new System.Windows.Forms.Label();
             this.chkSendOutputToFiles = new System.Windows.Forms.CheckBox();
             this.groupBox1Authentication.SuspendLayout();
             this.tabControl1.SuspendLayout();
@@ -410,8 +412,10 @@ namespace CrudGenerator {
             // 
             // tabPage2CSharp
             // 
+            this.tabPage2CSharp.Controls.Add(this.txtC_results);
+            this.tabPage2CSharp.Controls.Add(this.lblC_Result);
             this.tabPage2CSharp.Controls.Add(this.label1);
-            this.tabPage2CSharp.Controls.Add(this.button3);
+            this.tabPage2CSharp.Controls.Add(this.button3C_GenerateBL);
             this.tabPage2CSharp.Controls.Add(this.button2Generate);
             this.tabPage2CSharp.Location = new System.Drawing.Point(4, 22);
             this.tabPage2CSharp.Name = "tabPage2CSharp";
@@ -420,6 +424,53 @@ namespace CrudGenerator {
             this.tabPage2CSharp.TabIndex = 1;
             this.tabPage2CSharp.Text = "C # Code";
             this.tabPage2CSharp.UseVisualStyleBackColor = true;
+            // 
+            // txtC_results
+            // 
+            this.txtC_results.Location = new System.Drawing.Point(37, 167);
+            this.txtC_results.Multiline = true;
+            this.txtC_results.Name = "txtC_results";
+            this.txtC_results.ScrollBars = System.Windows.Forms.ScrollBars.Vertical;
+            this.txtC_results.Size = new System.Drawing.Size(658, 212);
+            this.txtC_results.TabIndex = 22;
+            // 
+            // lblC_Result
+            // 
+            this.lblC_Result.AutoSize = true;
+            this.lblC_Result.Location = new System.Drawing.Point(34, 151);
+            this.lblC_Result.Name = "lblC_Result";
+            this.lblC_Result.Size = new System.Drawing.Size(42, 13);
+            this.lblC_Result.TabIndex = 21;
+            this.lblC_Result.Text = "Results";
+            // 
+            // label1
+            // 
+            this.label1.AutoSize = true;
+            this.label1.Font = new System.Drawing.Font("Microsoft Sans Serif", 14.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.label1.Location = new System.Drawing.Point(15, 14);
+            this.label1.Name = "label1";
+            this.label1.Size = new System.Drawing.Size(196, 24);
+            this.label1.TabIndex = 20;
+            this.label1.Text = "C # Code Generator";
+            // 
+            // button3C_GenerateBL
+            // 
+            this.button3C_GenerateBL.Location = new System.Drawing.Point(37, 59);
+            this.button3C_GenerateBL.Name = "button3C_GenerateBL";
+            this.button3C_GenerateBL.Size = new System.Drawing.Size(172, 23);
+            this.button3C_GenerateBL.TabIndex = 1;
+            this.button3C_GenerateBL.Text = "Generate Business Layer";
+            this.button3C_GenerateBL.UseVisualStyleBackColor = true;
+            this.button3C_GenerateBL.Click += new System.EventHandler(this.button3C_GenerateBL_Click);
+            // 
+            // button2Generate
+            // 
+            this.button2Generate.Location = new System.Drawing.Point(292, 59);
+            this.button2Generate.Name = "button2Generate";
+            this.button2Generate.Size = new System.Drawing.Size(172, 23);
+            this.button2Generate.TabIndex = 0;
+            this.button2Generate.Text = "Generate Data Layer";
+            this.button2Generate.UseVisualStyleBackColor = true;
             // 
             // tabPage3VBCode
             // 
@@ -542,34 +593,6 @@ namespace CrudGenerator {
             this.label2SprocPrefix.TabIndex = 22;
             this.label2SprocPrefix.Text = "SPROC Prefix";
             // 
-            // button2Generate
-            // 
-            this.button2Generate.Location = new System.Drawing.Point(91, 77);
-            this.button2Generate.Name = "button2Generate";
-            this.button2Generate.Size = new System.Drawing.Size(172, 23);
-            this.button2Generate.TabIndex = 0;
-            this.button2Generate.Text = "Generate Data Layer";
-            this.button2Generate.UseVisualStyleBackColor = true;
-            // 
-            // button3
-            // 
-            this.button3.Location = new System.Drawing.Point(91, 117);
-            this.button3.Name = "button3";
-            this.button3.Size = new System.Drawing.Size(172, 23);
-            this.button3.TabIndex = 1;
-            this.button3.Text = "Generate Business Layer";
-            this.button3.UseVisualStyleBackColor = true;
-            // 
-            // label1
-            // 
-            this.label1.AutoSize = true;
-            this.label1.Font = new System.Drawing.Font("Microsoft Sans Serif", 14.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.label1.Location = new System.Drawing.Point(15, 14);
-            this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(196, 24);
-            this.label1.TabIndex = 20;
-            this.label1.Text = "C # Code Generator";
-            // 
             // chkSendOutputToFiles
             // 
             this.chkSendOutputToFiles.AutoSize = true;
@@ -687,9 +710,11 @@ namespace CrudGenerator {
         private System.Windows.Forms.Label label1CodeNamespace;
         private System.Windows.Forms.Label label2SprocPrefix;
         private System.Windows.Forms.Label label1;
-        private System.Windows.Forms.Button button3;
+        private System.Windows.Forms.Button button3C_GenerateBL;
         private System.Windows.Forms.Button button2Generate;
         private System.Windows.Forms.CheckBox chkSendOutputToFiles;
+        private System.Windows.Forms.TextBox txtC_results;
+        private System.Windows.Forms.Label lblC_Result;
     }
 }
 

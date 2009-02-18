@@ -87,13 +87,15 @@ namespace CrudGenerator {
                 else
                     ConnectionString = "Server=" + server + ";Database=" + database + ";Trusted_Connection=True;";
 
+                Util.Utility.ConnectionString = ConnectionString;
+
                 DataTable dt = GetColumns();
-                List<GenSPROC> tables = GenSPROC.ParseDataTable(dt);
+                List<CrudGenSPROC> tables = CrudGenSPROC.ParseDataTable(dt);
                 string errors = "";
                 SuccessLog = new StringBuilder();
                 ErrorLog = new StringBuilder();
 
-                foreach (GenSPROC table in tables) {
+                foreach (CrudGenSPROC table in tables) {
                     table.Author = this.txtAuthor.Text;
                     table.IsActive = this.txtIsActive.Text;
 
@@ -219,9 +221,33 @@ namespace CrudGenerator {
             txtAuthor.Text = s.AuthorName;
 
         }
+        #region C# crud
+        private void button3C_GenerateBL_Click(object sender, EventArgs e)
+        {
+            List<CrudGenCSharp> cSharpFiles = new List<CrudGenCSharp>();
+            DataTable dt = GetColumns();
+            List<CrudGenSPROC> tables = CrudGenSPROC.ParseDataTable(dt);
+            foreach (CrudGenSPROC tbl in tables) {
+            
+              cSharpFiles.Add( new CrudGenCSharp("MyNameSpace", tbl.TableName , tbl.Columns ));
 
-     
+            }
 
-  
+            txtC_results.Text = "";
+
+        }
+
+        private void PushTextOfCSharpCodeToTextBox(List<CrudGenCSharp> cruds) {
+
+            foreach (CrudGenCSharp crud in cruds) {
+                txtC_results.Text += crud.CrudObject.ToString() + "\n";
+                txtC_results.Text += crud.CrudData.ToString() + "\n";
+            }
+        }
+
+        #endregion //C# crud
+
+
+
     }
 }
