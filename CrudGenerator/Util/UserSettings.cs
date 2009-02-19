@@ -23,6 +23,7 @@ namespace CrudGenerator.Util
                 IsolatedStorageScope.Assembly |
                 IsolatedStorageScope.Domain;
 
+
         private UserSettings()
         { }
 

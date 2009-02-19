@@ -14,7 +14,11 @@ namespace CrudGenerator {
         public CrudDAC(string strConnection) {
             connection = new SqlConnection();
             connection.ConnectionString = strConnection;
-            connection.Open();
+            try
+            {
+                connection.Open();
+            }
+            catch (Exception ex) { throw ex; }
         }
 
         #region IDisposable Members

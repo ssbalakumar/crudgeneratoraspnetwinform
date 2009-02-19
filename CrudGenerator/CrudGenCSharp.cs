@@ -30,42 +30,45 @@ namespace CrudGenerator
             BuildCrudObject();
             BuildCrudData();
             
-
+           
         
         }
 
       
         public void BuildCrudObject(){
-            crudObject.AppendFormat("namespace {0} {\n", _namespace);
-            crudObject.AppendFormat("public class {0}{\n", _className );
+            crudObject = new StringBuilder();
+            crudObject.AppendFormat("{1}//******************** {0} ****************************//{1}", _className, Environment.NewLine );
+            crudObject.AppendFormat("\r\n namespace {0} {{\r\n", _namespace);
+            crudObject.AppendFormat("public class {0}{{\r\n", _className );
             crudObject.Append(BuildFields(_cols));
             crudObject.Append(BuildProps(_cols) );
             crudObject.Append(BuildConstructor(_cols, _className));
             crudObject.Append(BuildCRUD(_cols));
-            crudObject.AppendFormat("} //{0}\n", _className);
-            crudObject.AppendFormat("\n} //{0}", _namespace);
+            crudObject.AppendFormat("}} //{0}\r\n", _className);
+            crudObject.AppendFormat("\r\n}} //{0}", _namespace);
         }
 
         private void BuildCrudData()
         {
-            crudData.AppendFormat("namespace {0} {\n", _namespace);
-            crudData.AppendFormat("public class {0}Data{\n", _className);
-            crudData.Append("\\under construction");
-            crudData.AppendFormat("} //{0}\n", _className);
-            crudData.AppendFormat("\n} //{0}", _namespace);
+            crudData = new StringBuilder();
+            crudData.AppendFormat("namespace {0} {{\r\n", _namespace);
+            crudData.AppendFormat("public class {0}Data{{\r\n", _className);
+            crudData.Append("\\\\TODO under construction\r\n");
+            crudData.AppendFormat("}} //{0}\r\n", _className);
+            crudData.AppendFormat("\r\n}} //{0}\r\n", _namespace);
         }
 
 
         private string BuildFields(List<Column> cols) {
             System.ComponentModel.TypeConverter tc = new System.ComponentModel.TypeConverter();
 
-            string result="#region Fields";
+            string result="#region Fields\r\n";
             foreach (Column c in cols) {
                 //private int _field;
-                result += string.Format( "\t private {0} {1};\n", 
+                result += string.Format( "\t private {0} {1};\r\n", 
                     GetASPNetDataType (c),GetFieldName(c));
             }
-            result += "#endregion //Fields";
+            result += "#endregion //Fields\r\n";
 
             return result;
         }
@@ -74,15 +77,15 @@ namespace CrudGenerator
         {
             System.ComponentModel.TypeConverter tc = new System.ComponentModel.TypeConverter();
 
-            string result = "#region Props";
+            string result = "#region Props\r\n";
 
             foreach (Column c in cols)
             {
-                //public int Property {get{return _field;} set{_field=value}};
-                result += string.Format("\tpublic {0} {2} {get{return {1};} set{{1}=value}};\n",
+                //public int Property {get{return _field;} set{_field=value;}}
+                result += string.Format("\tpublic {0} {2} {{get{{return {1};}} set{{{1}=value;}}}}\r\n",
                     GetASPNetDataType(c), GetFieldName(c), GetPropName(c));
             }
-            result += "#endregion //Props";
+            result += "#endregion //Props\r\n";
 
             return result;
         }
@@ -91,33 +94,33 @@ namespace CrudGenerator
         {
             System.ComponentModel.TypeConverter tc = new System.ComponentModel.TypeConverter();
 
-            string result = "#region CTOR";
-            string CTORdflt=string.Format("\tpublic {0}(){\n", className);
-            string CTOR = string.Format("\tpublic {0} ({1}){\n", className, GetFieldsAsInputParams(cols));
+            string result = "#region CTOR\r\n";
+            string CTORdflt=string.Format("\tpublic {0}(){{\r\n", className);
+            string CTOR = string.Format("\tpublic {0} ({1}){{\r\n", className, GetFieldsAsInputParams(cols));
             foreach (Column c in cols)
             {
                 
                 //_field=value;
-                CTORdflt += string.Format("\t\tpublic {0} {2} {get{return {1};} set{{1}=value}};\n",
+                CTORdflt += string.Format("\t\tpublic {0} {2} {{get{{return {1};}} set{{{1}=value}}}};\r\n",
                     GetASPNetDataType(c), GetFieldName(c), GetPropName(c));
 
                 //_field=inputParam;
-                CTOR += string.Format ("\t\t{0}={1};\n",
+                CTOR += string.Format ("\t\t{0}={1};\r\n",
                     GetFieldName(c), GetInputParamName(c));
 
             }
             
 
-            CTORdflt += "\t}/n";
-            CTOR += "\t}/n";
+            CTORdflt += "\t}\r\n";
+            CTOR += "\t}\r\n";
             result += CTORdflt + CTOR;
-            result += "#endregion //CTOR";
+            result += "#endregion //CTOR\r\n";
             return result;
         }
 
         private string BuildCRUD(List<Column> cols) {
-            StringBuilder result= new StringBuilder().Append("#region CRUD\n");
-            string pattern = "public bool ACTION(PARAMS){\n//TODO setup ACTION\n}\n";
+            StringBuilder result= new StringBuilder().Append("#region CRUD\r\n");
+            string pattern = "public bool ACTION(PARAMS){\r\n//TODO setup ACTION\r\n}\r\n";
             string create, retrieveByID,retrieveAll, update, delete;
             create = retrieveByID = retrieveAll = update = delete = pattern;
             create = pattern.Replace("ACTION", "Create").Replace("PARAMS", "");
@@ -130,7 +133,7 @@ namespace CrudGenerator
             result.Append(retrieveByID);
             result.Append(update);
             result.Append(delete);
-            result.Append("#endregion //CRUD\n");
+            result.Append("#endregion //CRUD\r\n");
             return result.ToString();
         }
 
@@ -228,7 +231,20 @@ namespace CrudGenerator
         /// <returns></returns>
         private string GetASPNetDataType(Column c)
         {
-            SqlDbType type = (SqlDbType)Enum.Parse(typeof(SqlDbType), c.DataType);
+            //init cap and match dataType of Enum list's casing in order for parsing to be ok
+            string sqlDbTypeFriendlyStr = c.DataType.Substring(0, 1).ToUpper() + c.DataType.Substring(1);
+            sqlDbTypeFriendlyStr = sqlDbTypeFriendlyStr.Replace("int", "Int").Replace("money", "Money").Replace("char", "Char");
+            sqlDbTypeFriendlyStr = sqlDbTypeFriendlyStr.Replace("Uniqueidentifier", "UniqueIdentifier");
+            sqlDbTypeFriendlyStr = sqlDbTypeFriendlyStr.Replace("binary", "Binary").Replace("varChar", "VarChar");
+            sqlDbTypeFriendlyStr = sqlDbTypeFriendlyStr.Replace("text", "Text").Replace("time", "Time");
+            sqlDbTypeFriendlyStr = sqlDbTypeFriendlyStr.Replace("Numeric", "Decimal");
+            if (sqlDbTypeFriendlyStr.Contains(" ")) { 
+                //get string before space
+                sqlDbTypeFriendlyStr = sqlDbTypeFriendlyStr.Substring(0, sqlDbTypeFriendlyStr.IndexOf(' '));
+            }
+
+
+            SqlDbType type = (SqlDbType)Enum.Parse(typeof(SqlDbType), sqlDbTypeFriendlyStr);
             string result = "";
             switch (type)
             {
