@@ -9,13 +9,18 @@ As I make some changes and assumptions, I will add them here.
 
 ==SPROC CRUD GENERATOR v1.1 (unreleased version)==
  * Added very basic ability to save the current working session information so you don't have to enter the username, password, table name filter, and output directory each time you run the application.
+ * When the output to file checkbox is checked, the sql is generated but not executed.
+    # +apply to sql
+    # +apply to c#
 
 ==SPROC CRUD GENERATOR v1.0.4==
  * The generate drop if exists checkbox is now off by default - since it might overwrite customized content.
 === TODO ===
- * When the output to file checkbox is checked, the sql is generated but not executed.
-    # -apply to sql
-    # -apply to c#
- * wire up a stored procedure prefix textbox
+
+  * Wire up a stored procedure prefix textbox
+  * wire up the Data Access Layer
+  * Wire up the data layer to use stored procedures for input and the data access layer to talk to the database.
+  * WIre up the Business object to use the data layer.
+
 
 ==C# CRUD GENERATOR==
