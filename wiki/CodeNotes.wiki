@@ -4,8 +4,6 @@
 
 This bit of C# code returns a new file path in case you need to not overwrite existing file names.  
 
-
-= Details =
 {{{
         /// <summary>Checks if the file exists, and if it does, appends a number to the end of the file name
         /// </summary>
