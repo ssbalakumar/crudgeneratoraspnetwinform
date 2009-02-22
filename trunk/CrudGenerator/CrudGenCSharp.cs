@@ -16,6 +16,8 @@ namespace CrudGenerator
         StringBuilder crudData;
         string _namespace;
         string _className;
+        public string ClassName{get { return _className; }}
+
         List<Column> _cols;
         public string CrudObject { get { return crudObject.ToString(); } }
         public string CrudData { get { return crudData.ToString(); } }

@@ -58,6 +58,10 @@ namespace CrudGenerator {
             this.txtSuccessLog = new System.Windows.Forms.TextBox();
             this.label5 = new System.Windows.Forms.Label();
             this.tabPage2CSharp = new System.Windows.Forms.TabPage();
+            this.txtC_DAL = new System.Windows.Forms.TextBox();
+            this.label3 = new System.Windows.Forms.Label();
+            this.txtC_DL = new System.Windows.Forms.TextBox();
+            this.label2 = new System.Windows.Forms.Label();
             this.txtC_BL = new System.Windows.Forms.TextBox();
             this.lblC_Result = new System.Windows.Forms.Label();
             this.label1 = new System.Windows.Forms.Label();
@@ -65,6 +69,7 @@ namespace CrudGenerator {
             this.btnGenerateDataLayer = new System.Windows.Forms.Button();
             this.tabPage3VBCode = new System.Windows.Forms.TabPage();
             this.webBrowser1VBCode = new System.Windows.Forms.WebBrowser();
+            this.tabPage1Options = new System.Windows.Forms.TabPage();
             this.label1AppTitle = new System.Windows.Forms.Label();
             this.menuStrip1 = new System.Windows.Forms.MenuStrip();
             this.fileToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -72,6 +77,8 @@ namespace CrudGenerator {
             this.saveSessionAsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStripTextBox1SessionName = new System.Windows.Forms.ToolStripTextBox();
             this.loadSessionToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.settingsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.showSettingsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.txtOutputDirectory = new System.Windows.Forms.TextBox();
             this.folderBrowserDialog1 = new System.Windows.Forms.FolderBrowserDialog();
             this.button2SelectFolder = new System.Windows.Forms.Button();
@@ -79,15 +86,14 @@ namespace CrudGenerator {
             this.txtSprocPrefix = new System.Windows.Forms.TextBox();
             this.label2SprocPrefix = new System.Windows.Forms.Label();
             this.chkSendOutputToFiles = new System.Windows.Forms.CheckBox();
-            this.txtC_DL = new System.Windows.Forms.TextBox();
-            this.label2 = new System.Windows.Forms.Label();
-            this.txtC_DAL = new System.Windows.Forms.TextBox();
-            this.label3 = new System.Windows.Forms.Label();
+            this.hideOptionsTabToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.checkBox1OverWriteExisting = new System.Windows.Forms.CheckBox();
             this.groupBox1Authentication.SuspendLayout();
             this.tabControl1.SuspendLayout();
             this.tabPage1SPROCs.SuspendLayout();
             this.tabPage2CSharp.SuspendLayout();
             this.tabPage3VBCode.SuspendLayout();
+            this.tabPage1Options.SuspendLayout();
             this.menuStrip1.SuspendLayout();
             this.SuspendLayout();
             // 
@@ -355,6 +361,7 @@ namespace CrudGenerator {
             this.tabControl1.Controls.Add(this.tabPage1SPROCs);
             this.tabControl1.Controls.Add(this.tabPage2CSharp);
             this.tabControl1.Controls.Add(this.tabPage3VBCode);
+            this.tabControl1.Controls.Add(this.tabPage1Options);
             this.tabControl1.Location = new System.Drawing.Point(184, 27);
             this.tabControl1.Name = "tabControl1";
             this.tabControl1.SelectedIndex = 0;
@@ -433,6 +440,42 @@ namespace CrudGenerator {
             this.tabPage2CSharp.Text = "C # Code";
             this.tabPage2CSharp.UseVisualStyleBackColor = true;
             // 
+            // txtC_DAL
+            // 
+            this.txtC_DAL.Location = new System.Drawing.Point(32, 390);
+            this.txtC_DAL.Multiline = true;
+            this.txtC_DAL.Name = "txtC_DAL";
+            this.txtC_DAL.ScrollBars = System.Windows.Forms.ScrollBars.Vertical;
+            this.txtC_DAL.Size = new System.Drawing.Size(658, 122);
+            this.txtC_DAL.TabIndex = 26;
+            // 
+            // label3
+            // 
+            this.label3.AutoSize = true;
+            this.label3.Location = new System.Drawing.Point(29, 374);
+            this.label3.Name = "label3";
+            this.label3.Size = new System.Drawing.Size(97, 13);
+            this.label3.TabIndex = 25;
+            this.label3.Text = "Data Access Layer";
+            // 
+            // txtC_DL
+            // 
+            this.txtC_DL.Location = new System.Drawing.Point(32, 240);
+            this.txtC_DL.Multiline = true;
+            this.txtC_DL.Name = "txtC_DL";
+            this.txtC_DL.ScrollBars = System.Windows.Forms.ScrollBars.Vertical;
+            this.txtC_DL.Size = new System.Drawing.Size(658, 122);
+            this.txtC_DL.TabIndex = 24;
+            // 
+            // label2
+            // 
+            this.label2.AutoSize = true;
+            this.label2.Location = new System.Drawing.Point(29, 224);
+            this.label2.Name = "label2";
+            this.label2.Size = new System.Drawing.Size(59, 13);
+            this.label2.TabIndex = 23;
+            this.label2.Text = "Data Layer";
+            // 
             // txtC_BL
             // 
             this.txtC_BL.Location = new System.Drawing.Point(37, 113);
@@ -501,6 +544,17 @@ namespace CrudGenerator {
             this.webBrowser1VBCode.TabIndex = 1;
             this.webBrowser1VBCode.Url = new System.Uri("", System.UriKind.Relative);
             // 
+            // tabPage1Options
+            // 
+            this.tabPage1Options.Controls.Add(this.checkBox1OverWriteExisting);
+            this.tabPage1Options.Location = new System.Drawing.Point(4, 22);
+            this.tabPage1Options.Name = "tabPage1Options";
+            this.tabPage1Options.Padding = new System.Windows.Forms.Padding(3);
+            this.tabPage1Options.Size = new System.Drawing.Size(729, 530);
+            this.tabPage1Options.TabIndex = 3;
+            this.tabPage1Options.Text = "Options";
+            this.tabPage1Options.UseVisualStyleBackColor = true;
+            // 
             // label1AppTitle
             // 
             this.label1AppTitle.AutoSize = true;
@@ -514,7 +568,8 @@ namespace CrudGenerator {
             // menuStrip1
             // 
             this.menuStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.fileToolStripMenuItem});
+            this.fileToolStripMenuItem,
+            this.settingsToolStripMenuItem});
             this.menuStrip1.Location = new System.Drawing.Point(0, 0);
             this.menuStrip1.Name = "menuStrip1";
             this.menuStrip1.Size = new System.Drawing.Size(934, 24);
@@ -525,8 +580,8 @@ namespace CrudGenerator {
             // 
             this.fileToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.exitToolStripMenuItem,
-            this.saveSessionAsToolStripMenuItem,
-            this.loadSessionToolStripMenuItem});
+            this.loadSessionToolStripMenuItem,
+            this.saveSessionAsToolStripMenuItem});
             this.fileToolStripMenuItem.Name = "fileToolStripMenuItem";
             this.fileToolStripMenuItem.Size = new System.Drawing.Size(35, 20);
             this.fileToolStripMenuItem.Text = "File";
@@ -550,8 +605,8 @@ namespace CrudGenerator {
             // 
             this.toolStripTextBox1SessionName.Name = "toolStripTextBox1SessionName";
             this.toolStripTextBox1SessionName.Size = new System.Drawing.Size(100, 21);
+            this.toolStripTextBox1SessionName.Text = "CurrentSession";
             this.toolStripTextBox1SessionName.KeyDown += new System.Windows.Forms.KeyEventHandler(this.toolStripTextBox1SessionName_KeyDown);
-            
             // 
             // loadSessionToolStripMenuItem
             // 
@@ -559,6 +614,22 @@ namespace CrudGenerator {
             this.loadSessionToolStripMenuItem.Size = new System.Drawing.Size(163, 22);
             this.loadSessionToolStripMenuItem.Text = "Load Session";
             this.loadSessionToolStripMenuItem.Click += new System.EventHandler(this.loadSessionToolStripMenuItem_Click);
+            // 
+            // settingsToolStripMenuItem
+            // 
+            this.settingsToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.showSettingsToolStripMenuItem,
+            this.hideOptionsTabToolStripMenuItem});
+            this.settingsToolStripMenuItem.Name = "settingsToolStripMenuItem";
+            this.settingsToolStripMenuItem.Size = new System.Drawing.Size(44, 20);
+            this.settingsToolStripMenuItem.Text = "Tools";
+            // 
+            // showSettingsToolStripMenuItem
+            // 
+            this.showSettingsToolStripMenuItem.Name = "showSettingsToolStripMenuItem";
+            this.showSettingsToolStripMenuItem.Size = new System.Drawing.Size(172, 22);
+            this.showSettingsToolStripMenuItem.Text = "Show Options Tab";
+            this.showSettingsToolStripMenuItem.Click += new System.EventHandler(this.showSettingsToolStripMenuItem_Click);
             // 
             // txtOutputDirectory
             // 
@@ -610,48 +681,32 @@ namespace CrudGenerator {
             this.chkSendOutputToFiles.AutoSize = true;
             this.chkSendOutputToFiles.Checked = true;
             this.chkSendOutputToFiles.CheckState = System.Windows.Forms.CheckState.Checked;
-            this.chkSendOutputToFiles.Location = new System.Drawing.Point(58, 642);
+            this.chkSendOutputToFiles.Location = new System.Drawing.Point(58, 641);
             this.chkSendOutputToFiles.Name = "chkSendOutputToFiles";
             this.chkSendOutputToFiles.Size = new System.Drawing.Size(122, 17);
             this.chkSendOutputToFiles.TabIndex = 26;
             this.chkSendOutputToFiles.Text = "Send Output to Files";
             this.chkSendOutputToFiles.UseVisualStyleBackColor = true;
             // 
-            // txtC_DL
+            // hideOptionsTabToolStripMenuItem
             // 
-            this.txtC_DL.Location = new System.Drawing.Point(32, 240);
-            this.txtC_DL.Multiline = true;
-            this.txtC_DL.Name = "txtC_DL";
-            this.txtC_DL.ScrollBars = System.Windows.Forms.ScrollBars.Vertical;
-            this.txtC_DL.Size = new System.Drawing.Size(658, 122);
-            this.txtC_DL.TabIndex = 24;
+            this.hideOptionsTabToolStripMenuItem.Name = "hideOptionsTabToolStripMenuItem";
+            this.hideOptionsTabToolStripMenuItem.Size = new System.Drawing.Size(172, 22);
+            this.hideOptionsTabToolStripMenuItem.Text = "Hide Options Tab";
+            this.hideOptionsTabToolStripMenuItem.Visible = false;
+            this.hideOptionsTabToolStripMenuItem.Click += new System.EventHandler(this.hideOptionsTabToolStripMenuItem_Click);
             // 
-            // label2
+            // checkBox1OverWriteExisting
             // 
-            this.label2.AutoSize = true;
-            this.label2.Location = new System.Drawing.Point(29, 224);
-            this.label2.Name = "label2";
-            this.label2.Size = new System.Drawing.Size(59, 13);
-            this.label2.TabIndex = 23;
-            this.label2.Text = "Data Layer";
-            // 
-            // txtC_DAL
-            // 
-            this.txtC_DAL.Location = new System.Drawing.Point(32, 390);
-            this.txtC_DAL.Multiline = true;
-            this.txtC_DAL.Name = "txtC_DAL";
-            this.txtC_DAL.ScrollBars = System.Windows.Forms.ScrollBars.Vertical;
-            this.txtC_DAL.Size = new System.Drawing.Size(658, 122);
-            this.txtC_DAL.TabIndex = 26;
-            // 
-            // label3
-            // 
-            this.label3.AutoSize = true;
-            this.label3.Location = new System.Drawing.Point(29, 374);
-            this.label3.Name = "label3";
-            this.label3.Size = new System.Drawing.Size(97, 13);
-            this.label3.TabIndex = 25;
-            this.label3.Text = "Data Access Layer";
+            this.checkBox1OverWriteExisting.AutoSize = true;
+            this.checkBox1OverWriteExisting.Checked = true;
+            this.checkBox1OverWriteExisting.CheckState = System.Windows.Forms.CheckState.Checked;
+            this.checkBox1OverWriteExisting.Location = new System.Drawing.Point(59, 70);
+            this.checkBox1OverWriteExisting.Name = "checkBox1OverWriteExisting";
+            this.checkBox1OverWriteExisting.Size = new System.Drawing.Size(234, 17);
+            this.checkBox1OverWriteExisting.TabIndex = 0;
+            this.checkBox1OverWriteExisting.Text = "When outputting files, overwrite existing files";
+            this.checkBox1OverWriteExisting.UseVisualStyleBackColor = true;
             // 
             // Form1
             // 
@@ -699,6 +754,8 @@ namespace CrudGenerator {
             this.tabPage2CSharp.ResumeLayout(false);
             this.tabPage2CSharp.PerformLayout();
             this.tabPage3VBCode.ResumeLayout(false);
+            this.tabPage1Options.ResumeLayout(false);
+            this.tabPage1Options.PerformLayout();
             this.menuStrip1.ResumeLayout(false);
             this.menuStrip1.PerformLayout();
             this.ResumeLayout(false);
@@ -767,6 +824,11 @@ namespace CrudGenerator {
         private System.Windows.Forms.Label label2;
         private System.Windows.Forms.TextBox txtC_DAL;
         private System.Windows.Forms.Label label3;
+        private System.Windows.Forms.TabPage tabPage1Options;
+        private System.Windows.Forms.ToolStripMenuItem settingsToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem showSettingsToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem hideOptionsTabToolStripMenuItem;
+        private System.Windows.Forms.CheckBox checkBox1OverWriteExisting;
     }
 }
 
