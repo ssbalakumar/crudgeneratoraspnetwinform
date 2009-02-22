@@ -58,9 +58,7 @@ namespace CrudGenerator {
         #region Methods that call to the dac. also append to logs
         private string Execute(string sql, string name) {
 
-            if (Util.Utility.UserSettings.ResultsToFile)
-            {
-                SuccessLog.Append("--Here's another sproc (You need to run it manually)" + Environment.NewLine );
+            if (Util.Utility.UserSettings.ResultsToFile){
                 SuccessLog.Append(sql);
                 return "";
             }
@@ -96,7 +94,9 @@ namespace CrudGenerator {
 
         #region Make Stored Procedures BUTTON
         private void button1_Click(object sender, EventArgs e) {
-            UpdateSessionInUtil();
+            try { CheckIfAllRequiredFilledAreEntered(); }
+            catch(Exception ex) {MessageBox.Show(ex.Message);return;}
+
             if (string.IsNullOrEmpty(u.ConnectionString))
             {
                 MessageBox.Show("The connectionstring is empty");
@@ -104,52 +104,58 @@ namespace CrudGenerator {
             }
             string server = this.txtServer.Text, database = this.txtDatabase.Text, userName = this.txtUser.Text, passWord = this.txtPassword.Text;
             bool dropIfExists = u.UserSettings.SprocDropIfExists ;
-            if (server.Length > 0 && database.Length > 0) {
-                DataTable dt = GetColumns();
-                List<CrudGenSPROC> sprocs = CrudGenSPROC.ParseDataTable(dt);
-                string errors = "";
-                SuccessLog = new StringBuilder();
-                ErrorLog = new StringBuilder();
-                //if u.UserSettings.
+            DataTable dt = GetColumns();
+            List<CrudGenSPROC> sprocs = CrudGenSPROC.ParseDataTable(dt);
+            string errors = "";
+            SuccessLog = new StringBuilder();
+            ErrorLog = new StringBuilder();
 
-                foreach (CrudGenSPROC sp in sprocs) {
-                    sp.Author = this.txtAuthor.Text;
-                    sp.IsActive = this.txtIsActive.Text;
+            foreach (CrudGenSPROC sp in sprocs) {
+                sp.Author = this.txtAuthor.Text;
+                sp.IsActive = this.txtIsActive.Text;
 
-                    string errorLine = "";
-                    
-                    if (u.UserSettings.SprocCreate)
-                        errorLine = errorLine + Execute(sp.GenerateCreate(dropIfExists), "Create");
-                    if (u.UserSettings.SprocDelete)
-                        errorLine = errorLine + Execute(sp.GenerateDelete(dropIfExists), "Delete");
-                    if (u.UserSettings.SprocUpdate)
-                        errorLine = errorLine + Execute(sp.GenerateUpdate(dropIfExists), "Update");
-                    if (u.UserSettings.SprocRetrieveAll)
-                        errorLine = errorLine + Execute(sp.GenerateSelectAll(dropIfExists), "ReadAll");
-                    if (u.UserSettings.SprocRetrieveByID)
-                        errorLine = errorLine + Execute(sp.GenerateSelectById(dropIfExists), "ReadById");
-                    if (this.chkDeactivate.Checked)
-                        errorLine = errorLine + Execute(sp.GenerateDeactiveate(dropIfExists), "Deactivate");
+                string errorLine = "";
+                
+                if (u.UserSettings.SprocCreate)
+                    errorLine = errorLine + Execute(sp.GenerateCreate(dropIfExists), "Create");
+                if (u.UserSettings.SprocDelete)
+                    errorLine = errorLine + Execute(sp.GenerateDelete(dropIfExists), "Delete");
+                if (u.UserSettings.SprocUpdate)
+                    errorLine = errorLine + Execute(sp.GenerateUpdate(dropIfExists), "Update");
+                if (u.UserSettings.SprocRetrieveAll)
+                    errorLine = errorLine + Execute(sp.GenerateSelectAll(dropIfExists), "ReadAll");
+                if (u.UserSettings.SprocRetrieveByID)
+                    errorLine = errorLine + Execute(sp.GenerateSelectById(dropIfExists), "ReadById");
+                if (this.chkDeactivate.Checked)
+                    errorLine = errorLine + Execute(sp.GenerateDeactiveate(dropIfExists), "Deactivate");
 
-                    if (errorLine.Length > 0) {
-                        if (errors.Length > 0)
-                            errors = errors + Environment.NewLine;
-                        errors = errors + sp.TableName + "-" + errorLine.Remove(errorLine.Length-2);//remove ", "
-                    }
+                if (errorLine.Length > 0) {
+                    if (errors.Length > 0)
+                        errors = errors + Environment.NewLine;
+                    errors = errors + sp.TableName + "-" + errorLine.Remove(errorLine.Length-2);//remove ", "
                 }
-                if (errors.Length > 0)
-                    MessageBox.Show("The following procedures were not able to be generated:" + Environment.NewLine + errors);
-                else {
-                    MessageBox.Show("SUCCESS");
-                }
+            }
+           
+            if (u.UserSettings.ResultsToFile) {
+                this.txtSuccessLog.Text = "Files created in " + u.UserSettings.OutputDirectory + Environment.NewLine ;
+                this.txtSuccessLog.Text += "  -  See file name: " + "InstallCRUD_SPROCs.sql" + Environment.NewLine;
+                FileSaver fs = new FileSaver();
+                fs.SaveFile(u.UserSettings.OutputDirectory + "InstallCRUD_SPROCs.sql", SuccessLog.ToString(), u.UserSettings.ResultFileOverwrite );
+            }
+            else
+            {
                 this.txtSuccessLog.Text = SuccessLog.ToString();
                 this.txtErrorLog.Text = ErrorLog.ToString();
-                ErrorLog = null;
-                SuccessLog = null;
-            } else {
-                System.Media.SystemSounds.Beep.Play();
-                MessageBox.Show("Must enter both server and database;");
             }
+            if (errors.Length > 0)
+                MessageBox.Show("The following procedures were not able to be generated:" + Environment.NewLine + errors);
+            else
+            {
+                MessageBox.Show("SUCCESS");
+            }
+            ErrorLog = null;
+            SuccessLog = null;
+
         }
         #endregion
 
@@ -209,6 +215,11 @@ namespace CrudGenerator {
             Util.Utility.UserSettings = GetSettingsData("workingSession");
         
         }
+
+        /// <summary>
+        /// save the current session as the name passed in the querystring
+        /// </summary>
+        /// <param name="sessionName"></param>
         private  void SaveSession(string sessionName) {
 
             if (string.IsNullOrEmpty(sessionName))
@@ -216,8 +227,9 @@ namespace CrudGenerator {
                 MessageBox.Show("The save as name should not be blank");
                 return;
             }
-            Util.SettingsData s = GetSettingsData(sessionName);
-            s.SaveSettings();
+            UpdateSessionInUtil();
+            u.UserSettings.SettingName = sessionName  ;
+            Util.SettingsData.SaveSettings(u.UserSettings);
             
         }
 
@@ -230,7 +242,7 @@ namespace CrudGenerator {
                 txtTableName.Text, chBxDropIfExists.Checked,
                 chkCreate.Checked, chkReadById.Checked, chkReadAll.Checked,
                 chkUpdate.Checked, chkDelete.Checked, chkDeactivate.Checked,
-                txtIsActive.Text, chkSendOutputToFiles.Checked);
+                txtIsActive.Text, chkSendOutputToFiles.Checked, checkBox1OverWriteExisting.Checked);
             return s;
         }
 
@@ -252,11 +264,8 @@ namespace CrudGenerator {
         #region C# crud
         private void button3C_GenerateBL_Click(object sender, EventArgs e)
         {
-            UpdateSessionInUtil();
-            if (string.IsNullOrEmpty(u.ConnectionString)) {
-                MessageBox.Show("The connectionstring is empty");
-                return;
-            }
+            try { CheckIfAllRequiredFilledAreEntered(); }
+            catch (Exception ex) { MessageBox.Show(ex.Message); return; }
             List<CrudGenCSharp> cSharpFiles = new List<CrudGenCSharp>();
             DataTable dt = GetColumns();
             List<CrudGenSPROC> tables = CrudGenSPROC.ParseDataTable(dt);
@@ -267,14 +276,43 @@ namespace CrudGenerator {
             GenerateFiles(cSharpFiles);
         }
 
+        //throws an exception if any required field is left empty
+        public string CheckIfAllRequiredFilledAreEntered(){
+            string errMsg="";
+            UpdateSessionInUtil();
+
+            if (string.IsNullOrEmpty(u.ConnectionString))
+                errMsg+=string.Format("The connectionstring is empty{0}", Environment.NewLine);
+            if (u.UserSettings.ResultsToFile && string.IsNullOrEmpty(u.UserSettings.OutputDirectory))
+                errMsg += string.Format("When the results to file is checked, the output directory must not be empty.{0}", Environment.NewLine);
+            if(u.UserSettings.TrustedConnection == false && (u.UserSettings.DbUsername=="" || u.UserSettings.DbPassword==""))
+                errMsg += string.Format("When the connection is not trusted, the username and password are required{0}", Environment.NewLine);
+            //errMsg += string.Format("{0}", Environment.NewLine);
+
+            if (errMsg != "") throw new Exception(errMsg);
+            return errMsg;
+
+        }
+
         private void GenerateFiles(List<CrudGenCSharp> cSharpFiles) {
             //output the files
+            FileSaver fs = new FileSaver();
             foreach (CrudGenCSharp cs in cSharpFiles)
             {
-                txtC_BL.Text  += cs.CrudObject;
-                txtC_DL.Text += cs.CrudData;
-                txtC_DAL.Text += "Under construction";
+                //todo output BL and DL 
+                if (u.UserSettings.ResultsToFile)
+                {
+                    fs.SaveFile(u.UserSettings.OutputDirectory + cs.ClassName + ".cs", cs.CrudObject, u.UserSettings.ResultFileOverwrite);
+                    fs.SaveFile(u.UserSettings.OutputDirectory + cs.ClassName + "Data.cs", cs.CrudData, u.UserSettings.ResultFileOverwrite);
+                }
+                else
+                {
+                    txtC_BL.Text += cs.CrudObject;
+                    txtC_DL.Text += cs.CrudData;
+                }
+                
             }
+            txtC_DAL.Text += "Under construction";
         
         }
 
@@ -294,9 +332,18 @@ namespace CrudGenerator {
             MessageBox.Show("Under construction.");
         }
 
+        private void showSettingsToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            tabPage1Options.Hide();
+            showSettingsToolStripMenuItem.Visible = false;
+            hideOptionsTabToolStripMenuItem.Visible = true;
+        }
 
-
-
-
+        private void hideOptionsTabToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            tabPage1Options.Show();
+            showSettingsToolStripMenuItem.Visible = true;
+            hideOptionsTabToolStripMenuItem.Visible = false;
+        }
     }
 }
