@@ -242,7 +242,8 @@ namespace CrudGenerator {
                 txtTableName.Text, chBxDropIfExists.Checked,
                 chkCreate.Checked, chkReadById.Checked, chkReadAll.Checked,
                 chkUpdate.Checked, chkDelete.Checked, chkDeactivate.Checked,
-                txtIsActive.Text, chkSendOutputToFiles.Checked, checkBox1OverWriteExisting.Checked);
+                txtIsActive.Text, chkSendOutputToFiles.Checked, checkBox1OverWriteExisting.Checked,
+                checkBox1GuidIsCrudParam.Checked);
             return s;
         }
 

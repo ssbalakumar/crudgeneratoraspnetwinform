@@ -42,6 +42,11 @@ namespace CrudGenerator.Util
         public bool ResultsToFile;
         public bool ResultFileOverwrite;
         public string ConnectionString;
+
+    /// <summary>
+    /// 
+    /// </summary>
+        public bool UserIdIsParamForCRUBusinessLayer;
         /// <summary>
         /// more than one profile can be saved, the key is the settings name.
         /// </summary>
@@ -56,7 +61,7 @@ namespace CrudGenerator.Util
             bool sprocDropIfExists, bool sprocCreate, bool sprocRetrieveByID,
             bool sprocRetrieveAll,bool sprocUpdate, bool sprocDelete, 
             bool sprocDeActivate,string deactivateColumnName,
-            bool resultsToFile, bool resultFileOverwrite)
+            bool resultsToFile, bool resultFileOverwrite, bool userIdIsParamForCRUBusinessLayer)
         {
 
             //todo: initialize settingsData using input parameters.
@@ -81,6 +86,7 @@ namespace CrudGenerator.Util
              DeactivateColumnName=deactivateColumnName;
              ResultsToFile=resultsToFile;
              ResultFileOverwrite=resultFileOverwrite;
+             UserIdIsParamForCRUBusinessLayer = userIdIsParamForCRUBusinessLayer;
 
              if (!trustedConnection && !string.IsNullOrEmpty(serverName) && !string.IsNullOrEmpty(dbName) && !string.IsNullOrEmpty(dbUsername) && !string.IsNullOrEmpty(dbPassword))
                  ConnectionString = "Server=" + serverName + ";Database=" + dbName + ";uid=" + dbUsername + ";pwd=" + dbPassword + ";";
