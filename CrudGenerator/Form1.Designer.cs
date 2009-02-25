@@ -70,15 +70,17 @@ namespace CrudGenerator {
             this.tabPage3VBCode = new System.Windows.Forms.TabPage();
             this.webBrowser1VBCode = new System.Windows.Forms.WebBrowser();
             this.tabPage1Options = new System.Windows.Forms.TabPage();
+            this.checkBox1OverWriteExisting = new System.Windows.Forms.CheckBox();
             this.label1AppTitle = new System.Windows.Forms.Label();
             this.menuStrip1 = new System.Windows.Forms.MenuStrip();
             this.fileToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.exitToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.loadSessionToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.saveSessionAsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStripTextBox1SessionName = new System.Windows.Forms.ToolStripTextBox();
-            this.loadSessionToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.settingsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.showSettingsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.hideOptionsTabToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.txtOutputDirectory = new System.Windows.Forms.TextBox();
             this.folderBrowserDialog1 = new System.Windows.Forms.FolderBrowserDialog();
             this.button2SelectFolder = new System.Windows.Forms.Button();
@@ -86,8 +88,7 @@ namespace CrudGenerator {
             this.txtSprocPrefix = new System.Windows.Forms.TextBox();
             this.label2SprocPrefix = new System.Windows.Forms.Label();
             this.chkSendOutputToFiles = new System.Windows.Forms.CheckBox();
-            this.hideOptionsTabToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.checkBox1OverWriteExisting = new System.Windows.Forms.CheckBox();
+            this.checkBox1GuidIsCrudParam = new System.Windows.Forms.CheckBox();
             this.groupBox1Authentication.SuspendLayout();
             this.tabControl1.SuspendLayout();
             this.tabPage1SPROCs.SuspendLayout();
@@ -546,6 +547,7 @@ namespace CrudGenerator {
             // 
             // tabPage1Options
             // 
+            this.tabPage1Options.Controls.Add(this.checkBox1GuidIsCrudParam);
             this.tabPage1Options.Controls.Add(this.checkBox1OverWriteExisting);
             this.tabPage1Options.Location = new System.Drawing.Point(4, 22);
             this.tabPage1Options.Name = "tabPage1Options";
@@ -554,6 +556,18 @@ namespace CrudGenerator {
             this.tabPage1Options.TabIndex = 3;
             this.tabPage1Options.Text = "Options";
             this.tabPage1Options.UseVisualStyleBackColor = true;
+            // 
+            // checkBox1OverWriteExisting
+            // 
+            this.checkBox1OverWriteExisting.AutoSize = true;
+            this.checkBox1OverWriteExisting.Checked = true;
+            this.checkBox1OverWriteExisting.CheckState = System.Windows.Forms.CheckState.Checked;
+            this.checkBox1OverWriteExisting.Location = new System.Drawing.Point(59, 70);
+            this.checkBox1OverWriteExisting.Name = "checkBox1OverWriteExisting";
+            this.checkBox1OverWriteExisting.Size = new System.Drawing.Size(234, 17);
+            this.checkBox1OverWriteExisting.TabIndex = 0;
+            this.checkBox1OverWriteExisting.Text = "When outputting files, overwrite existing files";
+            this.checkBox1OverWriteExisting.UseVisualStyleBackColor = true;
             // 
             // label1AppTitle
             // 
@@ -593,6 +607,13 @@ namespace CrudGenerator {
             this.exitToolStripMenuItem.Text = "E&xit";
             this.exitToolStripMenuItem.Click += new System.EventHandler(this.exitToolStripMenuItem_Click);
             // 
+            // loadSessionToolStripMenuItem
+            // 
+            this.loadSessionToolStripMenuItem.Name = "loadSessionToolStripMenuItem";
+            this.loadSessionToolStripMenuItem.Size = new System.Drawing.Size(163, 22);
+            this.loadSessionToolStripMenuItem.Text = "Load Session";
+            this.loadSessionToolStripMenuItem.Click += new System.EventHandler(this.loadSessionToolStripMenuItem_Click);
+            // 
             // saveSessionAsToolStripMenuItem
             // 
             this.saveSessionAsToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
@@ -607,13 +628,6 @@ namespace CrudGenerator {
             this.toolStripTextBox1SessionName.Size = new System.Drawing.Size(100, 21);
             this.toolStripTextBox1SessionName.Text = "CurrentSession";
             this.toolStripTextBox1SessionName.KeyDown += new System.Windows.Forms.KeyEventHandler(this.toolStripTextBox1SessionName_KeyDown);
-            // 
-            // loadSessionToolStripMenuItem
-            // 
-            this.loadSessionToolStripMenuItem.Name = "loadSessionToolStripMenuItem";
-            this.loadSessionToolStripMenuItem.Size = new System.Drawing.Size(163, 22);
-            this.loadSessionToolStripMenuItem.Text = "Load Session";
-            this.loadSessionToolStripMenuItem.Click += new System.EventHandler(this.loadSessionToolStripMenuItem_Click);
             // 
             // settingsToolStripMenuItem
             // 
@@ -630,6 +644,14 @@ namespace CrudGenerator {
             this.showSettingsToolStripMenuItem.Size = new System.Drawing.Size(172, 22);
             this.showSettingsToolStripMenuItem.Text = "Show Options Tab";
             this.showSettingsToolStripMenuItem.Click += new System.EventHandler(this.showSettingsToolStripMenuItem_Click);
+            // 
+            // hideOptionsTabToolStripMenuItem
+            // 
+            this.hideOptionsTabToolStripMenuItem.Name = "hideOptionsTabToolStripMenuItem";
+            this.hideOptionsTabToolStripMenuItem.Size = new System.Drawing.Size(172, 22);
+            this.hideOptionsTabToolStripMenuItem.Text = "Hide Options Tab";
+            this.hideOptionsTabToolStripMenuItem.Visible = false;
+            this.hideOptionsTabToolStripMenuItem.Click += new System.EventHandler(this.hideOptionsTabToolStripMenuItem_Click);
             // 
             // txtOutputDirectory
             // 
@@ -688,25 +710,17 @@ namespace CrudGenerator {
             this.chkSendOutputToFiles.Text = "Send Output to Files";
             this.chkSendOutputToFiles.UseVisualStyleBackColor = true;
             // 
-            // hideOptionsTabToolStripMenuItem
+            // checkBox1GuidIsCrudParam
             // 
-            this.hideOptionsTabToolStripMenuItem.Name = "hideOptionsTabToolStripMenuItem";
-            this.hideOptionsTabToolStripMenuItem.Size = new System.Drawing.Size(172, 22);
-            this.hideOptionsTabToolStripMenuItem.Text = "Hide Options Tab";
-            this.hideOptionsTabToolStripMenuItem.Visible = false;
-            this.hideOptionsTabToolStripMenuItem.Click += new System.EventHandler(this.hideOptionsTabToolStripMenuItem_Click);
-            // 
-            // checkBox1OverWriteExisting
-            // 
-            this.checkBox1OverWriteExisting.AutoSize = true;
-            this.checkBox1OverWriteExisting.Checked = true;
-            this.checkBox1OverWriteExisting.CheckState = System.Windows.Forms.CheckState.Checked;
-            this.checkBox1OverWriteExisting.Location = new System.Drawing.Point(59, 70);
-            this.checkBox1OverWriteExisting.Name = "checkBox1OverWriteExisting";
-            this.checkBox1OverWriteExisting.Size = new System.Drawing.Size(234, 17);
-            this.checkBox1OverWriteExisting.TabIndex = 0;
-            this.checkBox1OverWriteExisting.Text = "When outputting files, overwrite existing files";
-            this.checkBox1OverWriteExisting.UseVisualStyleBackColor = true;
+            this.checkBox1GuidIsCrudParam.AutoSize = true;
+            this.checkBox1GuidIsCrudParam.Checked = true;
+            this.checkBox1GuidIsCrudParam.CheckState = System.Windows.Forms.CheckState.Checked;
+            this.checkBox1GuidIsCrudParam.Location = new System.Drawing.Point(59, 94);
+            this.checkBox1GuidIsCrudParam.Name = "checkBox1GuidIsCrudParam";
+            this.checkBox1GuidIsCrudParam.Size = new System.Drawing.Size(253, 17);
+            this.checkBox1GuidIsCrudParam.TabIndex = 1;
+            this.checkBox1GuidIsCrudParam.Text = "userId Guid is a parameter for all crud operations";
+            this.checkBox1GuidIsCrudParam.UseVisualStyleBackColor = true;
             // 
             // Form1
             // 
@@ -829,6 +843,7 @@ namespace CrudGenerator {
         private System.Windows.Forms.ToolStripMenuItem showSettingsToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem hideOptionsTabToolStripMenuItem;
         private System.Windows.Forms.CheckBox checkBox1OverWriteExisting;
+        private System.Windows.Forms.CheckBox checkBox1GuidIsCrudParam;
     }
 }
 

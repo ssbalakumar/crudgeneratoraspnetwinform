@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Text;
 using System.Data;
 using System.IO;
+using u = CrudGenerator.Util.Utility;
 
 namespace CrudGenerator
 {
@@ -68,7 +69,7 @@ namespace CrudGenerator
             foreach (Column c in cols) {
                 //private int _field;
                 result += string.Format( "\t private {0} {1};\r\n", 
-                    GetASPNetDataType (c),GetFieldName(c));
+                    c.GetASPNetDataType(),GetFieldName(c));
             }
             result += "#endregion //Fields\r\n";
 
@@ -85,7 +86,7 @@ namespace CrudGenerator
             {
                 //public int Property {get{return _field;} set{_field=value;}}
                 result += string.Format("\tpublic {0} {2} {{get{{return {1};}} set{{{1}=value;}}}}\r\n",
-                    GetASPNetDataType(c), GetFieldName(c), GetPropName(c));
+                    c.GetASPNetDataType(), GetFieldName(c), GetPropName(c));
             }
             result += "#endregion //Props\r\n";
 
@@ -104,7 +105,7 @@ namespace CrudGenerator
                 
                 //_field=value;
                 CTORdflt += string.Format("\t\tpublic {0} {2} {{get{{return {1};}} set{{{1}=value}}}};\r\n",
-                    GetASPNetDataType(c), GetFieldName(c), GetPropName(c));
+                    c.GetASPNetDataType(), GetFieldName(c), GetPropName(c));
 
                 //_field=inputParam;
                 CTOR += string.Format ("\t\t{0}={1};\r\n",
@@ -125,7 +126,7 @@ namespace CrudGenerator
             string pattern = "public bool ACTION(PARAMS){\r\n//TODO setup ACTION\r\n}\r\n";
             string create, retrieveByID,retrieveAll, update, delete;
             create = retrieveByID = retrieveAll = update = delete = pattern;
-            create = pattern.Replace("ACTION", "Create").Replace("PARAMS", "");
+            create = BuildCrud_CreateBL(cols);
             retrieveByID = pattern.Replace("ACTION", "RetrieveByID").Replace("PARAMS", GetFieldsAsInputParams(cols, true));
             retrieveAll = pattern.Replace("ACTION", "RetrieveAll").Replace("PARAMS", "");
             update = pattern.Replace("ACTION", "Update").Replace("PARAMS", "");
@@ -139,8 +140,43 @@ namespace CrudGenerator
             return result.ToString();
         }
 
+        /// <summary>Create should return the datatype of the current </summary>
+        private string BuildCrud_CreateBL(List<Column> cols)
+        {
+            string result = "";
+            //get the first key column's data type and use it as the return type 
+            string primaryKeyDataType = GetFirstKeyColumn(cols).GetASPNetDataType()  ;
+            result = "///<summary>returns the id of the item which was just created</summary>"
+                + string.Format("public {0} Create({1}){\r\n", primaryKeyDataType, (u.UserSettings.UserIdIsParamForCRUBusinessLayer)?"Guid userId":"" )
+                + string.Format("\t return {0}Data.Create({1}this);\r\n", _className, (u.UserSettings.UserIdIsParamForCRUBusinessLayer) ? "userId, " : "")
+                + "}";
+            return result;
+        }
 
+        /// <summary>Create should return the datatype of the current </summary>
+        private string BuildCrud_CreateDL(List<Column> cols)
+        {
+            string result = "";
+            //todo referenct the create stored procedure and pass to it parameters to create a new item and return id of the new entry
+            string primaryKeyDataType = GetFirstKeyColumn(cols).GetASPNetDataType();
+            result = "///<summary>returns the id of the item which was just created</summary>"
+                + string.Format("public static {0} Create(){\r\n", primaryKeyDataType)
+                + string.Format("\t \r\n")
+                + "}";
+            return result;
+        }
+        private Column GetFirstKeyColumn(List<Column> cols) {
+            Column keyCol = null;
+            foreach (Column c in cols) {
+                if (c.IsIdentity)
+                {
+                    keyCol = c;
+                    break;
+                }
+            }
 
+            return keyCol;
+        }
         private string GetFieldsAsInputParams(List<Column> cols) {
             return GetFieldsAsInputParams(cols, false);
         }
@@ -161,7 +197,7 @@ namespace CrudGenerator
         private string GetFieldAsInputParameter(Column c) {
             string result = "";
             result = string.Format ("{0} {1}",
-                GetASPNetDataType(c), GetInputParamName(c));
+                c.GetASPNetDataType(), GetInputParamName(c));
             return result;
         
         }
@@ -231,59 +267,59 @@ namespace CrudGenerator
         /// </summary>
         /// <param name="type"></param>
         /// <returns></returns>
-        private string GetASPNetDataType(Column c)
-        {
-            //init cap and match dataType of Enum list's casing in order for parsing to be ok
-            string sqlDbTypeFriendlyStr = c.DataType.Substring(0, 1).ToUpper() + c.DataType.Substring(1);
-            sqlDbTypeFriendlyStr = sqlDbTypeFriendlyStr.Replace("int", "Int").Replace("money", "Money").Replace("char", "Char");
-            sqlDbTypeFriendlyStr = sqlDbTypeFriendlyStr.Replace("Uniqueidentifier", "UniqueIdentifier");
-            sqlDbTypeFriendlyStr = sqlDbTypeFriendlyStr.Replace("binary", "Binary").Replace("varChar", "VarChar");
-            sqlDbTypeFriendlyStr = sqlDbTypeFriendlyStr.Replace("text", "Text").Replace("time", "Time");
-            sqlDbTypeFriendlyStr = sqlDbTypeFriendlyStr.Replace("Numeric", "Decimal");
-            if (sqlDbTypeFriendlyStr.Contains(" ")) { 
-                //get string before space
-                sqlDbTypeFriendlyStr = sqlDbTypeFriendlyStr.Substring(0, sqlDbTypeFriendlyStr.IndexOf(' '));
-            }
+        //private string GetASPNetDataType(Column c)
+        //{
+        //    //init cap and match dataType of Enum list's casing in order for parsing to be ok
+        //    string sqlDbTypeFriendlyStr = c.DataType.Substring(0, 1).ToUpper() + c.DataType.Substring(1);
+        //    sqlDbTypeFriendlyStr = sqlDbTypeFriendlyStr.Replace("int", "Int").Replace("money", "Money").Replace("char", "Char");
+        //    sqlDbTypeFriendlyStr = sqlDbTypeFriendlyStr.Replace("Uniqueidentifier", "UniqueIdentifier");
+        //    sqlDbTypeFriendlyStr = sqlDbTypeFriendlyStr.Replace("binary", "Binary").Replace("varChar", "VarChar");
+        //    sqlDbTypeFriendlyStr = sqlDbTypeFriendlyStr.Replace("text", "Text").Replace("time", "Time");
+        //    sqlDbTypeFriendlyStr = sqlDbTypeFriendlyStr.Replace("Numeric", "Decimal");
+        //    if (sqlDbTypeFriendlyStr.Contains(" ")) { 
+        //        //get string before space
+        //        sqlDbTypeFriendlyStr = sqlDbTypeFriendlyStr.Substring(0, sqlDbTypeFriendlyStr.IndexOf(' '));
+        //    }
 
 
-            SqlDbType type = (SqlDbType)Enum.Parse(typeof(SqlDbType), sqlDbTypeFriendlyStr);
-            string result = "";
-            switch (type)
-            {
-                case SqlDbType.Binary:
-                case SqlDbType.Bit:
-                case SqlDbType.VarBinary:
-                    result = "bool"; break;
-                case SqlDbType.BigInt:
-                case SqlDbType.Int:
-                case SqlDbType.TinyInt:
-                case SqlDbType.SmallInt:
-                    result = "int"; break;
-                case SqlDbType.Money:
-                case SqlDbType.Decimal:
-                case SqlDbType.Float:
-                case SqlDbType.Real:
-                case SqlDbType.SmallMoney:
-                    result = "decimal"; break;
-                case SqlDbType.Char:
-                case SqlDbType.NChar:
-                    result = "char"; break;
-                case SqlDbType.VarChar:
-                case SqlDbType.NText:
-                case SqlDbType.NVarChar:
-                case SqlDbType.Text:
-                    result = "string"; break;
-                case SqlDbType.Date:
-                case SqlDbType.DateTime:
-                case SqlDbType.DateTime2:
-                case SqlDbType.SmallDateTime:
-                case SqlDbType.Time:
-                    result = "DateTime"; break;
-                case SqlDbType.UniqueIdentifier:
-                    result = "Guid"; break;
-            }
+        //    SqlDbType type = (SqlDbType)Enum.Parse(typeof(SqlDbType), sqlDbTypeFriendlyStr);
+        //    string result = "";
+        //    switch (type)
+        //    {
+        //        case SqlDbType.Binary:
+        //        case SqlDbType.Bit:
+        //        case SqlDbType.VarBinary:
+        //            result = "bool"; break;
+        //        case SqlDbType.BigInt:
+        //        case SqlDbType.Int:
+        //        case SqlDbType.TinyInt:
+        //        case SqlDbType.SmallInt:
+        //            result = "int"; break;
+        //        case SqlDbType.Money:
+        //        case SqlDbType.Decimal:
+        //        case SqlDbType.Float:
+        //        case SqlDbType.Real:
+        //        case SqlDbType.SmallMoney:
+        //            result = "decimal"; break;
+        //        case SqlDbType.Char:
+        //        case SqlDbType.NChar:
+        //            result = "char"; break;
+        //        case SqlDbType.VarChar:
+        //        case SqlDbType.NText:
+        //        case SqlDbType.NVarChar:
+        //        case SqlDbType.Text:
+        //            result = "string"; break;
+        //        case SqlDbType.Date:
+        //        case SqlDbType.DateTime:
+        //        case SqlDbType.DateTime2:
+        //        case SqlDbType.SmallDateTime:
+        //        case SqlDbType.Time:
+        //            result = "DateTime"; break;
+        //        case SqlDbType.UniqueIdentifier:
+        //            result = "Guid"; break;
+        //    }
 
-            return result;
-        }
+        //    return result;
+        //}
     }
 }
