@@ -108,13 +108,17 @@ namespace CrudGenerator.Util
         /// <summary>Saves the settings after getting them from the saved location and replacing the current key with the updated version from the current session
         /// </summary>
         public static void SaveSettings(SettingsData sd){
+            
             object SavedSettings = UserSettings.RestoreObject(SettingsFileName);
+            if (SettingDataDict == null) SettingDataDict = new Dictionary<string, SettingsData>();
             if (SavedSettings is SettingsData){ //in case what's saved is 
                 SettingsData settings = (SettingsData)SavedSettings;
-                SettingDataDict[settings.SettingName] = settings;
+                SettingDataDict[settings.SettingName] = settings; //resurrect saved settings and add current settings to it.
+                SettingDataDict[sd.SettingName] = sd; //add current item to list
             }
             else if (SavedSettings is Dictionary<string, SettingsData>){
                 SettingDataDict = (Dictionary<string, SettingsData>)SavedSettings;
+                SettingDataDict[sd.SettingName] = sd;
             }
 
             if (SettingDataDict == null) SettingDataDict = new Dictionary<string, SettingsData>();

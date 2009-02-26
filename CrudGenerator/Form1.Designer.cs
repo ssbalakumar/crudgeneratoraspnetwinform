@@ -70,6 +70,7 @@ namespace CrudGenerator {
             this.tabPage3VBCode = new System.Windows.Forms.TabPage();
             this.webBrowser1VBCode = new System.Windows.Forms.WebBrowser();
             this.tabPage1Options = new System.Windows.Forms.TabPage();
+            this.checkBox1GuidIsCrudParam = new System.Windows.Forms.CheckBox();
             this.checkBox1OverWriteExisting = new System.Windows.Forms.CheckBox();
             this.label1AppTitle = new System.Windows.Forms.Label();
             this.menuStrip1 = new System.Windows.Forms.MenuStrip();
@@ -88,7 +89,6 @@ namespace CrudGenerator {
             this.txtSprocPrefix = new System.Windows.Forms.TextBox();
             this.label2SprocPrefix = new System.Windows.Forms.Label();
             this.chkSendOutputToFiles = new System.Windows.Forms.CheckBox();
-            this.checkBox1GuidIsCrudParam = new System.Windows.Forms.CheckBox();
             this.groupBox1Authentication.SuspendLayout();
             this.tabControl1.SuspendLayout();
             this.tabPage1SPROCs.SuspendLayout();
@@ -350,7 +350,7 @@ namespace CrudGenerator {
             // label1CodeNamespace
             // 
             this.label1CodeNamespace.AutoSize = true;
-            this.label1CodeNamespace.Location = new System.Drawing.Point(10, 466);
+            this.label1CodeNamespace.Location = new System.Drawing.Point(36, 44);
             this.label1CodeNamespace.Name = "label1CodeNamespace";
             this.label1CodeNamespace.Size = new System.Drawing.Size(64, 13);
             this.label1CodeNamespace.TabIndex = 23;
@@ -373,6 +373,8 @@ namespace CrudGenerator {
             // tabPage1SPROCs
             // 
             this.tabPage1SPROCs.Controls.Add(this.txtErrorLog);
+            this.tabPage1SPROCs.Controls.Add(this.txtSprocPrefix);
+            this.tabPage1SPROCs.Controls.Add(this.label2SprocPrefix);
             this.tabPage1SPROCs.Controls.Add(this.chBxDropIfExists);
             this.tabPage1SPROCs.Controls.Add(this.label8);
             this.tabPage1SPROCs.Controls.Add(this.txtSuccessLog);
@@ -425,7 +427,9 @@ namespace CrudGenerator {
             // tabPage2CSharp
             // 
             this.tabPage2CSharp.Controls.Add(this.txtC_DAL);
+            this.tabPage2CSharp.Controls.Add(this.txtNamespace);
             this.tabPage2CSharp.Controls.Add(this.label3);
+            this.tabPage2CSharp.Controls.Add(this.label1CodeNamespace);
             this.tabPage2CSharp.Controls.Add(this.txtC_DL);
             this.tabPage2CSharp.Controls.Add(this.label2);
             this.tabPage2CSharp.Controls.Add(this.txtC_BL);
@@ -507,7 +511,7 @@ namespace CrudGenerator {
             // 
             // button3C_GenerateBL
             // 
-            this.button3C_GenerateBL.Location = new System.Drawing.Point(37, 59);
+            this.button3C_GenerateBL.Location = new System.Drawing.Point(104, 71);
             this.button3C_GenerateBL.Name = "button3C_GenerateBL";
             this.button3C_GenerateBL.Size = new System.Drawing.Size(172, 23);
             this.button3C_GenerateBL.TabIndex = 1;
@@ -518,7 +522,7 @@ namespace CrudGenerator {
             // btnGenerateDataLayer
             // 
             this.btnGenerateDataLayer.Enabled = false;
-            this.btnGenerateDataLayer.Location = new System.Drawing.Point(292, 59);
+            this.btnGenerateDataLayer.Location = new System.Drawing.Point(282, 71);
             this.btnGenerateDataLayer.Name = "btnGenerateDataLayer";
             this.btnGenerateDataLayer.Size = new System.Drawing.Size(172, 23);
             this.btnGenerateDataLayer.TabIndex = 0;
@@ -556,6 +560,18 @@ namespace CrudGenerator {
             this.tabPage1Options.TabIndex = 3;
             this.tabPage1Options.Text = "Options";
             this.tabPage1Options.UseVisualStyleBackColor = true;
+            // 
+            // checkBox1GuidIsCrudParam
+            // 
+            this.checkBox1GuidIsCrudParam.AutoSize = true;
+            this.checkBox1GuidIsCrudParam.Checked = true;
+            this.checkBox1GuidIsCrudParam.CheckState = System.Windows.Forms.CheckState.Checked;
+            this.checkBox1GuidIsCrudParam.Location = new System.Drawing.Point(59, 94);
+            this.checkBox1GuidIsCrudParam.Name = "checkBox1GuidIsCrudParam";
+            this.checkBox1GuidIsCrudParam.Size = new System.Drawing.Size(253, 17);
+            this.checkBox1GuidIsCrudParam.TabIndex = 1;
+            this.checkBox1GuidIsCrudParam.Text = "userId Guid is a parameter for all crud operations";
+            this.checkBox1GuidIsCrudParam.UseVisualStyleBackColor = true;
             // 
             // checkBox1OverWriteExisting
             // 
@@ -676,15 +692,15 @@ namespace CrudGenerator {
             // 
             // txtNamespace
             // 
-            this.txtNamespace.Location = new System.Drawing.Point(78, 463);
+            this.txtNamespace.Location = new System.Drawing.Point(104, 41);
             this.txtNamespace.Name = "txtNamespace";
-            this.txtNamespace.Size = new System.Drawing.Size(99, 20);
+            this.txtNamespace.Size = new System.Drawing.Size(199, 20);
             this.txtNamespace.TabIndex = 25;
             this.txtNamespace.Text = "MyCompany.MyProduct";
             // 
             // txtSprocPrefix
             // 
-            this.txtSprocPrefix.Location = new System.Drawing.Point(100, 436);
+            this.txtSprocPrefix.Location = new System.Drawing.Point(482, 16);
             this.txtSprocPrefix.Name = "txtSprocPrefix";
             this.txtSprocPrefix.Size = new System.Drawing.Size(78, 20);
             this.txtSprocPrefix.TabIndex = 24;
@@ -692,7 +708,7 @@ namespace CrudGenerator {
             // label2SprocPrefix
             // 
             this.label2SprocPrefix.AutoSize = true;
-            this.label2SprocPrefix.Location = new System.Drawing.Point(10, 439);
+            this.label2SprocPrefix.Location = new System.Drawing.Point(392, 19);
             this.label2SprocPrefix.Name = "label2SprocPrefix";
             this.label2SprocPrefix.Size = new System.Drawing.Size(73, 13);
             this.label2SprocPrefix.TabIndex = 22;
@@ -710,28 +726,12 @@ namespace CrudGenerator {
             this.chkSendOutputToFiles.Text = "Send Output to Files";
             this.chkSendOutputToFiles.UseVisualStyleBackColor = true;
             // 
-            // checkBox1GuidIsCrudParam
-            // 
-            this.checkBox1GuidIsCrudParam.AutoSize = true;
-            this.checkBox1GuidIsCrudParam.Checked = true;
-            this.checkBox1GuidIsCrudParam.CheckState = System.Windows.Forms.CheckState.Checked;
-            this.checkBox1GuidIsCrudParam.Location = new System.Drawing.Point(59, 94);
-            this.checkBox1GuidIsCrudParam.Name = "checkBox1GuidIsCrudParam";
-            this.checkBox1GuidIsCrudParam.Size = new System.Drawing.Size(253, 17);
-            this.checkBox1GuidIsCrudParam.TabIndex = 1;
-            this.checkBox1GuidIsCrudParam.Text = "userId Guid is a parameter for all crud operations";
-            this.checkBox1GuidIsCrudParam.UseVisualStyleBackColor = true;
-            // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(934, 671);
             this.Controls.Add(this.chkSendOutputToFiles);
-            this.Controls.Add(this.txtNamespace);
-            this.Controls.Add(this.txtSprocPrefix);
-            this.Controls.Add(this.label1CodeNamespace);
-            this.Controls.Add(this.label2SprocPrefix);
             this.Controls.Add(this.button2SelectFolder);
             this.Controls.Add(this.txtOutputDirectory);
             this.Controls.Add(this.label1OutputDir);

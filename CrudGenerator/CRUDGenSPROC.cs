@@ -277,8 +277,28 @@ namespace CrudGenerator {
 
         #region CRUD - Common Code Methods
 
-        /// <summary>generates a drop if exists statment with a Go statement.  of the format [preFix][tableName][postFix]
-        /// </summary>
+        public static string GetSprocNameCreate(string tableName) {
+            return string.Format("{0}{1}_Create", Util.Utility.UserSettings.SprocPrefix, tableName );
+        }
+        public static string GetSprocNameReadById(string tableName)
+        {
+            return string.Format("{0}{1}_ReadById", Util.Utility.UserSettings.SprocPrefix, tableName);
+        }
+        public static string GetSprocNameReadAll(string tableName)
+        {
+            return string.Format("{0}{1}_ReadAll", Util.Utility.UserSettings.SprocPrefix, tableName);
+        }
+        public static string GetSprocNameUpdate(string tableName)
+        {
+            return string.Format("{0}{1}_Update", Util.Utility.UserSettings.SprocPrefix, tableName);
+        }
+
+        public static string GetSprocNameDelete(string tableName)
+        {
+            return string.Format("{0}{1}_Delete", Util.Utility.UserSettings.SprocPrefix, tableName);
+        }
+ 
+        /// <summary>generates a drop if exists statment with a Go statement.  of the format [preFix][tableName][postFix]</summary>
         private string WriteDropIfExists(StringBuilder sb,
             string postFix, string preFix)
         {

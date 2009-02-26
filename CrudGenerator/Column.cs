@@ -31,10 +31,7 @@ namespace CrudGenerator {
         }
 
 
-        /// <summary>
-        /// Returns the ASPNET data type which correspond's to the column.  Example: varchar is string.
-        /// </summary>
-        /// <returns></returns>
+        /// <summary>Returns the ASPNET data type which correspond's to the column.  Example: varchar is string.</summary>
         public string GetASPNetDataType()
         {
             //init cap and match dataType of Enum list's casing in order for parsing to be ok
