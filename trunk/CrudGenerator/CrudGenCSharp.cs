@@ -56,7 +56,7 @@ namespace CrudGenerator
             crudData = new StringBuilder();
             crudData.AppendFormat("namespace {0} {{\r\n", _namespace);
             crudData.AppendFormat("public class {0}Data{{\r\n", _className);
-            crudData.Append("\\\\TODO under construction\r\n");
+            crudData.Append(BuildCrud_CreateDL(_cols));
             crudData.AppendFormat("}} //{0}\r\n", _className);
             crudData.AppendFormat("\r\n}} //{0}\r\n", _namespace);
         }
@@ -147,9 +147,9 @@ namespace CrudGenerator
             //get the first key column's data type and use it as the return type 
             string primaryKeyDataType = GetFirstKeyColumn(cols).GetASPNetDataType()  ;
             result = "///<summary>returns the id of the item which was just created</summary>"
-                + string.Format("public {0} Create({1}){\r\n", primaryKeyDataType, (u.UserSettings.UserIdIsParamForCRUBusinessLayer)?"Guid userId":"" )
+                + string.Format("public {0} Create({1}){{\r\n", primaryKeyDataType, (u.UserSettings.UserIdIsParamForCRUBusinessLayer)?"Guid userId":"" )
                 + string.Format("\t return {0}Data.Create({1}this);\r\n", _className, (u.UserSettings.UserIdIsParamForCRUBusinessLayer) ? "userId, " : "")
-                + "}";
+                + "}}";
             return result;
         }
 
@@ -158,10 +158,22 @@ namespace CrudGenerator
         {
             string result = "";
             //todo referenct the create stored procedure and pass to it parameters to create a new item and return id of the new entry
-            string primaryKeyDataType = GetFirstKeyColumn(cols).GetASPNetDataType();
-            result = "///<summary>returns the id of the item which was just created</summary>"
-                + string.Format("public static {0} Create(){\r\n", primaryKeyDataType)
-                + string.Format("\t \r\n")
+            Column pkCol = GetFirstKeyColumn(cols);
+            result = "///<summary>returns the id of the item which was just created</summary>\r\n"
+                + string.Format("public static {0} Create({1}{2} inputObj){{\r\n", pkCol.GetASPNetDataType(),
+                    (u.UserSettings.UserIdIsParamForCRUBusinessLayer) ? "Guid userId," : "", _className)
+                + string.Format("\t using(SqlCommand cmd=new SqlCommand(\"{0}\")){{\r\n", CrudGenSPROC.GetSprocNameCreate(_className))
+                + "\t\t cmd.CommandType = CommandType.StoredProcedure;\r\n";
+
+            //for each column, add a parameter to the sproc
+            foreach (Column c in cols) {
+                result += string.Format("\t\t cmd.Parameters.AddWithValue(\"@{0}\" , inputObj.{1})\r\n", c.Name, GetPropName(c));
+                //todo: convert the value from theinput object to database friendly value... this means need to have a ToDBFriendly method
+            }
+            //todo: create DataAccessLayer which runs a command and returns each type of data - most important for me is int and unique identifier, and boolean
+            result += string.Format("\t\t return DataAccessLayer.RunCmdReturn_{0}(cmd);\r\n", pkCol.GetASPNetDataType());
+
+           result += string.Format("\t }} //close using statement \r\n")
                 + "}";
             return result;
         }
@@ -175,6 +187,7 @@ namespace CrudGenerator
                 }
             }
 
+            if (keyCol == null) keyCol = cols[0];
             return keyCol;
         }
         private string GetFieldsAsInputParams(List<Column> cols) {

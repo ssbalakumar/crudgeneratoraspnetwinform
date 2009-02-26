@@ -265,8 +265,10 @@ namespace CrudGenerator {
         #region C# crud
         private void button3C_GenerateBL_Click(object sender, EventArgs e)
         {
-            try { CheckIfAllRequiredFilledAreEntered(); }
-            catch (Exception ex) { MessageBox.Show(ex.Message); return; }
+            try { 
+                CheckIfAllRequiredFilledAreEntered();
+                if (txtNamespace.Text=="") throw new Exception("The namespace is required for c# classes.");
+            } catch (Exception ex) { MessageBox.Show(ex.Message); return; }
             List<CrudGenCSharp> cSharpFiles = new List<CrudGenCSharp>();
             DataTable dt = GetColumns();
             List<CrudGenSPROC> tables = CrudGenSPROC.ParseDataTable(dt);
