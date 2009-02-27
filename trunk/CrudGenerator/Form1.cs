@@ -315,7 +315,10 @@ namespace CrudGenerator {
                 }
                 
             }
-            txtC_DAL.Text += "Under construction";
+            //save DataReaderExtensions
+            fs.SaveFile(u.UserSettings.OutputDirectory + "DataReaderExtensions.cs", CrudGenCSharp.GetDataReaderExtensions(), true);
+
+            txtC_DAL.Text="Under construction";
         
         }
 
