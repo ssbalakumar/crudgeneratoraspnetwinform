@@ -13,9 +13,12 @@ namespace CrudGenerator
     class CrudGenCSharp
     {
 
-        StringBuilder crudObject;
-        StringBuilder crudData;
+        StringBuilder crudObject=new StringBuilder();
+        StringBuilder crudData=new StringBuilder();
+        /// <summary>Data Access Layer</summary>
+        StringBuilder crudDAL=new StringBuilder();
         string _namespace;
+        /// <summary>synonymous with the tableName</summary>
         string _className;
         public string ClassName{get { return _className; }}
 
@@ -39,7 +42,6 @@ namespace CrudGenerator
 
       
         public void BuildCrudObject(){
-            crudObject = new StringBuilder();
             crudObject.AppendFormat("{1}//******************** {0} ****************************//{1}", _className, Environment.NewLine );
             crudObject.AppendFormat("\r\n namespace {0} {{\r\n", _namespace);
             crudObject.AppendFormat("public class {0}{{\r\n", _className );
@@ -51,14 +53,17 @@ namespace CrudGenerator
             crudObject.AppendFormat("\r\n}} //{0}", _namespace);
         }
 
-        private void BuildCrudData()
-        {
-            crudData = new StringBuilder();
+        private void BuildCrudData() {
             crudData.AppendFormat("namespace {0} {{\r\n", _namespace);
             crudData.AppendFormat("public class {0}Data{{\r\n", _className);
             crudData.Append(BuildCrud_CreateDL(_cols));
             crudData.AppendFormat("}} //{0}\r\n", _className);
             crudData.AppendFormat("\r\n}} //{0}\r\n", _namespace);
+        }
+
+        private void BuildCrudDAL(){
+
+        
         }
 
 
@@ -275,64 +280,87 @@ namespace CrudGenerator
                 
             return result;
         }
+
+        public static string GetDataAccessLayer() {
+            return "";
+        }
         /// <summary>
-        /// The initial value fields are set to when the constructor is invoked
+        /// Helps to reduce the amount of code it takes to extract data from a dataReader
         /// </summary>
-        /// <param name="type"></param>
         /// <returns></returns>
-        //private string GetASPNetDataType(Column c)
-        //{
-        //    //init cap and match dataType of Enum list's casing in order for parsing to be ok
-        //    string sqlDbTypeFriendlyStr = c.DataType.Substring(0, 1).ToUpper() + c.DataType.Substring(1);
-        //    sqlDbTypeFriendlyStr = sqlDbTypeFriendlyStr.Replace("int", "Int").Replace("money", "Money").Replace("char", "Char");
-        //    sqlDbTypeFriendlyStr = sqlDbTypeFriendlyStr.Replace("Uniqueidentifier", "UniqueIdentifier");
-        //    sqlDbTypeFriendlyStr = sqlDbTypeFriendlyStr.Replace("binary", "Binary").Replace("varChar", "VarChar");
-        //    sqlDbTypeFriendlyStr = sqlDbTypeFriendlyStr.Replace("text", "Text").Replace("time", "Time");
-        //    sqlDbTypeFriendlyStr = sqlDbTypeFriendlyStr.Replace("Numeric", "Decimal");
-        //    if (sqlDbTypeFriendlyStr.Contains(" ")) { 
-        //        //get string before space
-        //        sqlDbTypeFriendlyStr = sqlDbTypeFriendlyStr.Substring(0, sqlDbTypeFriendlyStr.IndexOf(' '));
-        //    }
-
-
-        //    SqlDbType type = (SqlDbType)Enum.Parse(typeof(SqlDbType), sqlDbTypeFriendlyStr);
-        //    string result = "";
-        //    switch (type)
-        //    {
-        //        case SqlDbType.Binary:
-        //        case SqlDbType.Bit:
-        //        case SqlDbType.VarBinary:
-        //            result = "bool"; break;
-        //        case SqlDbType.BigInt:
-        //        case SqlDbType.Int:
-        //        case SqlDbType.TinyInt:
-        //        case SqlDbType.SmallInt:
-        //            result = "int"; break;
-        //        case SqlDbType.Money:
-        //        case SqlDbType.Decimal:
-        //        case SqlDbType.Float:
-        //        case SqlDbType.Real:
-        //        case SqlDbType.SmallMoney:
-        //            result = "decimal"; break;
-        //        case SqlDbType.Char:
-        //        case SqlDbType.NChar:
-        //            result = "char"; break;
-        //        case SqlDbType.VarChar:
-        //        case SqlDbType.NText:
-        //        case SqlDbType.NVarChar:
-        //        case SqlDbType.Text:
-        //            result = "string"; break;
-        //        case SqlDbType.Date:
-        //        case SqlDbType.DateTime:
-        //        case SqlDbType.DateTime2:
-        //        case SqlDbType.SmallDateTime:
-        //        case SqlDbType.Time:
-        //            result = "DateTime"; break;
-        //        case SqlDbType.UniqueIdentifier:
-        //            result = "Guid"; break;
-        //    }
-
-        //    return result;
-        //}
+        public static string GetDataReaderExtensions() {
+            StringBuilder sb = new StringBuilder();
+            sb.AppendLine("using System;");
+            sb.AppendLine("using System.Collections.Generic;");
+            sb.AppendLine("using System.Web;");
+            sb.AppendLine("using System.Data;");
+            sb.AppendLine("using System.Data.SqlClient;");
+            sb.AppendFormat ("namespace {0}.DL {{\r\n", u.UserSettings.CodeNamespace );
+            sb.AppendLine("    public static class DataReaderExtensions {");
+            sb.AppendLine("        public static string ToString(this IDataReader reader, string column) {");
+            sb.AppendLine("            if (reader[column] != DBNull.Value)");
+            sb.AppendLine("                return reader[column].ToString();");
+            sb.AppendLine("            else");
+            sb.AppendLine("                return \"\";");
+            sb.AppendLine("        }");
+            sb.AppendLine("        public static Boolean ToBool(this IDataReader reader, string column, bool defaultValue)");
+            sb.AppendLine("        {");
+            sb.AppendLine("            if (reader[column] != DBNull.Value)");
+            sb.AppendLine("                return bool.Parse(reader[column].ToString());");
+            sb.AppendLine("            else");
+            sb.AppendLine("                return defaultValue;");
+            sb.AppendLine("        }");
+            sb.AppendLine("");
+            sb.AppendLine("        public static int ToInt(this IDataReader reader, string column)");
+            sb.AppendLine("        {");
+            sb.AppendLine("            if (reader[column] != DBNull.Value)");
+            sb.AppendLine("            {");
+            sb.AppendLine("                return Convert.ToInt32(reader[column]);");
+            sb.AppendLine("            }");
+            sb.AppendLine("            else                ");
+            sb.AppendLine("                return 0;");
+            sb.AppendLine("        }");
+            sb.AppendLine("");
+            sb.AppendLine("        public static Decimal ToDecimal(this IDataReader reader, string column)");
+            sb.AppendLine("        {");
+            sb.AppendLine("            if (reader[column] != DBNull.Value)");
+            sb.AppendLine("            {");
+            sb.AppendLine("                return Convert.ToDecimal(reader[column]);");
+            sb.AppendLine("            }");
+            sb.AppendLine("            else");
+            sb.AppendLine("                return 0;");
+            sb.AppendLine("        }");
+            sb.AppendLine("        public static Guid ToGuid(this IDataReader reader, string column)");
+            sb.AppendLine("        {");
+            sb.AppendLine("            if (reader[column] != DBNull.Value)");
+            sb.AppendLine("            {");
+            sb.AppendLine("                return new Guid(reader[column].ToString());");
+            sb.AppendLine("            }");
+            sb.AppendLine("            else");
+            sb.AppendLine("                return Guid.Empty;");
+            sb.AppendLine("        }");
+            sb.AppendLine("        public static DateTime ToDateTime(this IDataReader reader, string column)");
+            sb.AppendLine("        {");
+            sb.AppendLine("            if (reader[column] != DBNull.Value)");
+            sb.AppendLine("            {");
+            sb.AppendLine("                return Convert.ToDateTime(reader[column]);");
+            sb.AppendLine("            }");
+            sb.AppendLine("            else");
+            sb.AppendLine("                return DateTime.MinValue;");
+            sb.AppendLine("        }");
+            sb.AppendLine("        //This converts an integer column to the given enum (T)");
+            sb.AppendLine("        public static T ToEnum<T>(this IDataReader reader, string column)");
+            sb.AppendLine("        {");
+            sb.AppendLine("            if (!typeof(T).IsEnum)");
+            sb.AppendLine("            {");
+            sb.AppendLine("                throw new ArgumentException(typeof(T).ToString() + \" is not an Enum\");");
+            sb.AppendLine("            }");
+            sb.AppendLine("            return (T)Enum.ToObject(typeof(T), reader.ToInt(column));");
+            sb.AppendLine("        }");
+            sb.AppendLine("    }");
+            sb.AppendLine("} //end namespace");
+            return sb.ToString();
+        }
+       
     }
 }
