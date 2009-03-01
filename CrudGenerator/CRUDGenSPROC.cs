@@ -96,7 +96,8 @@ namespace CrudGenerator {
         internal string GenerateSelectById(bool dropIfExists)
         {
             StringBuilder sb = new StringBuilder(2000);
-            if (dropIfExists) WriteDropIfExists(sb, "_ReadById", "");
+            WriteDropIfExists(dropIfExists, sb, "_ReadById", "");
+            
             WriteComments(sb);
             sb.Append("Create Procedure ");
             sb.Append(this.tableName);
@@ -122,7 +123,7 @@ namespace CrudGenerator {
         internal string GenerateSelectAll(bool dropIfExists)
         {
             StringBuilder sb = new StringBuilder(2000);
-            if (dropIfExists) WriteDropIfExists(sb, "_ReadAll", "");
+            WriteDropIfExists(dropIfExists,sb, "_ReadAll", "");
             WriteComments(sb);
             sb.Append("Create Procedure ");
             sb.Append(this.tableName);
@@ -139,12 +140,42 @@ namespace CrudGenerator {
 
             return sb.ToString();
         }
+        internal string GenerateSelectByUserId(bool dropIfExists) {
 
+            List<Column> userIdCols = Column.GetUserIdColumns(columns);
+            if (userIdCols.Count == 0) return "";
+            StringBuilder sb = new StringBuilder(2000);
+            string postfix = "_ReadByUserId";
+            WriteDropIfExists(dropIfExists, sb, postfix, "");
+            WriteComments(sb);
+            sb.AppendFormat("Create Procedure {0} (@userId uniqueIdentifier)\r\n", tableName+postfix );
+            sb.Append("AS Begin\r\n\tSET NOCOUNT ON\r\n");
+            sb.Append("\tselect\r\n\t");
 
+            SelectColumns(sb, true, this.Columns);
+
+            sb.Append("\r\n\tfrom ");
+            sb.Append(this.tableName);
+            WriteWhereConditionForUserIDCols(sb, userIdCols);
+            sb.Append("\r\nEnd\r\n");
+
+            return sb.ToString();
+        }
+
+        internal void WriteWhereConditionForUserIDCols(StringBuilder sb, List<Column> userIdCols) {
+            bool isFirst = true;
+            foreach (Column c in userIdCols) { 
+                if (isFirst)
+                    sb.Append("\r\nWhere @userId=" + c.Name );
+                else
+                    sb.Append("\r\n OR @userId=" + c.Name);
+            }
+
+        }
         internal string GenerateUpdate(bool dropIfExists)
         {
             StringBuilder sb = new StringBuilder(2000);
-            if (dropIfExists) WriteDropIfExists(sb, "_Update", "");
+            WriteDropIfExists(dropIfExists, sb, "_Update", "");
             WriteComments(sb);
             sb.Append("Create Procedure ");
             sb.Append(this.tableName);
@@ -182,7 +213,7 @@ namespace CrudGenerator {
         internal string GenerateDelete(bool dropIfExists)
         {
             StringBuilder sb = new StringBuilder(2000);
-            if (dropIfExists) WriteDropIfExists(sb, "_Delete", "");
+            WriteDropIfExists(dropIfExists,sb, "_Delete", "");
             WriteComments(sb);
             sb.Append("Create Procedure ");
             sb.Append(this.tableName);
@@ -203,7 +234,7 @@ namespace CrudGenerator {
 
         internal string GenerateCreate(bool dropIfExists) {
             StringBuilder sb = new StringBuilder(2000);
-            if (dropIfExists) WriteDropIfExists(sb, "_Create", "");
+            WriteDropIfExists(dropIfExists,sb, "_Create", "");
             WriteComments(sb);
             sb.Append("Create Procedure ");
             sb.Append(this.tableName);
@@ -250,7 +281,7 @@ namespace CrudGenerator {
         internal string GenerateDeactiveate(bool dropIfExists)
         {
             StringBuilder sb = new StringBuilder(2000);
-            if (dropIfExists) WriteDropIfExists(sb, "_Deactivate", "");
+            WriteDropIfExists(dropIfExists,sb, "_Deactivate", "");
             WriteComments(sb);
             sb.Append("Create Procedure ");
             sb.Append(this.tableName);
@@ -299,12 +330,28 @@ namespace CrudGenerator {
         }
  
         /// <summary>generates a drop if exists statment with a Go statement.  of the format [preFix][tableName][postFix]</summary>
-        private string WriteDropIfExists(StringBuilder sb,
+        private string WriteDropIfExists(bool dropIfExists, StringBuilder sb,
             string postFix, string preFix)
         {
+
+            if (!dropIfExists)
+            {
+                return "";// WriteIfNotExists(sb, postFix, preFix); //doing this would not work since the create statement needs to be the first statement in a batch
+            }
+
             string result = "Go \r\n if object_id('" + preFix + tableName + postFix + "', 'P') is not null \r\n";
             result += "\t drop proc " + preFix + tableName + postFix + " \r\n Go \r\n";
 
+            sb.Append(result);
+            return sb.ToString();
+        }
+
+        /// <summary>generates a drop if exists statment with a Go statement.  of the format [preFix][tableName][postFix]</summary>
+        private string WriteIfNotExists(StringBuilder sb,
+            string postFix, string preFix)
+        {
+            //drop you should get here if drop if exists is set to false.
+            string result = "Go \r\n if object_id('" + preFix + tableName + postFix + "', 'P') is null \r\n";
             sb.Append(result);
             return sb.ToString();
         }

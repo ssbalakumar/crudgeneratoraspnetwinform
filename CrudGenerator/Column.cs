@@ -6,7 +6,7 @@ using System.Data;
 namespace CrudGenerator {
     public class Column {
         string name = string.Empty;
-
+        private SqlDbType _sqlDbTypeOfColumn = SqlDbType.Structured;
         public string Name {
             get { return name; }
             set { name = value; }
@@ -30,27 +30,49 @@ namespace CrudGenerator {
             set { dataType = value; }
         }
 
+        /// <summary>
+        /// This is useful for determining if a table has a refernce to the userID, so i can create a crud to retrieve records by userId
+        /// </summary>
+        /// <param name="cols"></param>
+        /// <returns></returns>
+        public static List<Column> GetUserIdColumns(List<Column> cols) {
+
+            List<Column> result=new List<Column>();
+            foreach (Column c in cols) {
+                if ((c.name.ToLower().Contains("entryby") || 
+                     c.name.ToLower().Contains("user") || 
+                     c.name.ToLower().Contains("owner")) && 
+                     c.DataType.Contains("uniqueidentifier"))
+                        result.Add(c);
+            }
+            return result;
+        }
+        public SqlDbType SqlDbTypeOfColumn {
+            get {
+                if (_sqlDbTypeOfColumn != SqlDbType.Structured ) return _sqlDbTypeOfColumn;
+                string sqlDbTypeFriendlyStr = dataType.Substring(0, 1).ToUpper() + dataType.Substring(1);
+                sqlDbTypeFriendlyStr = sqlDbTypeFriendlyStr.Replace("int", "Int").Replace("money", "Money").Replace("char", "Char");
+                sqlDbTypeFriendlyStr = sqlDbTypeFriendlyStr.Replace("Uniqueidentifier", "UniqueIdentifier");
+                sqlDbTypeFriendlyStr = sqlDbTypeFriendlyStr.Replace("binary", "Binary").Replace("varChar", "VarChar");
+                sqlDbTypeFriendlyStr = sqlDbTypeFriendlyStr.Replace("text", "Text").Replace("time", "Time");
+                sqlDbTypeFriendlyStr = sqlDbTypeFriendlyStr.Replace("Numeric", "Decimal");
+                if (sqlDbTypeFriendlyStr.Contains(" "))
+                {
+                    //get string before space
+                    sqlDbTypeFriendlyStr = sqlDbTypeFriendlyStr.Substring(0, sqlDbTypeFriendlyStr.IndexOf(' '));
+                }
+
+                _sqlDbTypeOfColumn = (SqlDbType)Enum.Parse(typeof(SqlDbType), sqlDbTypeFriendlyStr);
+                return _sqlDbTypeOfColumn;
+            
+            }
+        }
 
         /// <summary>Returns the ASPNET data type which correspond's to the column.  Example: varchar is string.</summary>
         public string GetASPNetDataType()
         {
-            //init cap and match dataType of Enum list's casing in order for parsing to be ok
-            string sqlDbTypeFriendlyStr = dataType.Substring(0, 1).ToUpper() + dataType.Substring(1);
-            sqlDbTypeFriendlyStr = sqlDbTypeFriendlyStr.Replace("int", "Int").Replace("money", "Money").Replace("char", "Char");
-            sqlDbTypeFriendlyStr = sqlDbTypeFriendlyStr.Replace("Uniqueidentifier", "UniqueIdentifier");
-            sqlDbTypeFriendlyStr = sqlDbTypeFriendlyStr.Replace("binary", "Binary").Replace("varChar", "VarChar");
-            sqlDbTypeFriendlyStr = sqlDbTypeFriendlyStr.Replace("text", "Text").Replace("time", "Time");
-            sqlDbTypeFriendlyStr = sqlDbTypeFriendlyStr.Replace("Numeric", "Decimal");
-            if (sqlDbTypeFriendlyStr.Contains(" "))
-            {
-                //get string before space
-                sqlDbTypeFriendlyStr = sqlDbTypeFriendlyStr.Substring(0, sqlDbTypeFriendlyStr.IndexOf(' '));
-            }
-
-
-            SqlDbType type = (SqlDbType)Enum.Parse(typeof(SqlDbType), sqlDbTypeFriendlyStr);
             string result = "";
-            switch (type)
+            switch (SqlDbTypeOfColumn)
             {
                 case SqlDbType.Binary:
                 case SqlDbType.Bit:
