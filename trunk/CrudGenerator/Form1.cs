@@ -58,6 +58,8 @@ namespace CrudGenerator {
         #region Methods that call to the dac. also append to logs
         private string Execute(string sql, string name) {
 
+            if (sql == "") return "";
+
             if (Util.Utility.UserSettings.ResultsToFile){
                 SuccessLog.Append(sql);
                 return "";
@@ -117,17 +119,20 @@ namespace CrudGenerator {
                 string errorLine = "";
                 
                 if (u.UserSettings.SprocCreate)
-                    errorLine = errorLine + Execute(sp.GenerateCreate(dropIfExists), "Create");
+                    errorLine += Execute(sp.GenerateCreate(dropIfExists), "Create");
                 if (u.UserSettings.SprocDelete)
-                    errorLine = errorLine + Execute(sp.GenerateDelete(dropIfExists), "Delete");
+                    errorLine += Execute(sp.GenerateDelete(dropIfExists), "Delete");
                 if (u.UserSettings.SprocUpdate)
-                    errorLine = errorLine + Execute(sp.GenerateUpdate(dropIfExists), "Update");
+                    errorLine += Execute(sp.GenerateUpdate(dropIfExists), "Update");
                 if (u.UserSettings.SprocRetrieveAll)
-                    errorLine = errorLine + Execute(sp.GenerateSelectAll(dropIfExists), "ReadAll");
+                    errorLine += Execute(sp.GenerateSelectAll(dropIfExists), "ReadAll");
                 if (u.UserSettings.SprocRetrieveByID)
-                    errorLine = errorLine + Execute(sp.GenerateSelectById(dropIfExists), "ReadById");
+                    errorLine += Execute(sp.GenerateSelectById(dropIfExists), "ReadById");
+                if (u.UserSettings.ReadByIDIfUserIdColumnExists)
+                    errorLine += Execute(sp.GenerateSelectByUserId(dropIfExists), "ReadByUserId");
                 if (this.chkDeactivate.Checked)
-                    errorLine = errorLine + Execute(sp.GenerateDeactiveate(dropIfExists), "Deactivate");
+                    errorLine += Execute(sp.GenerateDeactiveate(dropIfExists), "Deactivate");
+                
 
                 if (errorLine.Length > 0) {
                     if (errors.Length > 0)
@@ -235,7 +240,7 @@ namespace CrudGenerator {
 
         private Util.SettingsData GetSettingsData(string sessionName) {
             Util.SettingsData s = new CrudGenerator.Util.SettingsData(
-                sessionName, txtNamespace.Text, txtSprocPrefix.Text,
+                sessionName, txtNamespaceBL.Text, txtNamespaceDL.Text, txtSprocPrefix.Text,
                 txtAuthor.Text, txtServer.Text, txtDatabase.Text,
                 checkBox1TrustedConnection.Checked,
                 txtUser.Text, txtPassword.Text, txtOutputDirectory.Text,
@@ -243,7 +248,7 @@ namespace CrudGenerator {
                 chkCreate.Checked, chkReadById.Checked, chkReadAll.Checked,
                 chkUpdate.Checked, chkDelete.Checked, chkDeactivate.Checked,
                 txtIsActive.Text, chkSendOutputToFiles.Checked, checkBox1OverWriteExisting.Checked,
-                checkBox1GuidIsCrudParam.Checked);
+                checkBox1GuidIsCrudParam.Checked, chbxAddReadByUserId.Checked );
             return s;
         }
 
@@ -256,24 +261,27 @@ namespace CrudGenerator {
             checkBox1TrustedConnection.Checked = s.TrustedConnection;
             txtOutputDirectory.Text = s.OutputDirectory;
             chBxDropIfExists.Checked = s.TrustedConnection;
+            chbxAddReadByUserId.Checked = s.ReadByIDIfUserIdColumnExists;
             txtTableName.Text = s.TableNameFilter;
             txtUser.Text = s.DbUsername;
             txtPassword.Text = s.DbPassword;
             txtAuthor.Text = s.AuthorName;
-            txtNamespace.Text = s.CodeNamespace;
+            txtNamespaceBL.Text = s.NamespaceBL;
+            txtNamespaceDL.Text = s.NamespaceDL;
+
         }
         #region C# crud
         private void button3C_GenerateBL_Click(object sender, EventArgs e)
         {
             try { 
                 CheckIfAllRequiredFilledAreEntered();
-                if (txtNamespace.Text=="") throw new Exception("The namespace is required for c# classes.");
+                if (txtNamespaceBL.Text=="") throw new Exception("The namespace is required for c# classes.");
             } catch (Exception ex) { MessageBox.Show(ex.Message); return; }
             List<CrudGenCSharp> cSharpFiles = new List<CrudGenCSharp>();
             DataTable dt = GetColumns();
             List<CrudGenSPROC> tables = CrudGenSPROC.ParseDataTable(dt);
             foreach (CrudGenSPROC tbl in tables) {
-              cSharpFiles.Add( new CrudGenCSharp(u.UserSettings.CodeNamespace, tbl.TableName , tbl.Columns ));    
+              cSharpFiles.Add( new CrudGenCSharp(u.UserSettings.NamespaceBL, tbl.TableName , tbl.Columns ));    
             }
 
             GenerateFiles(cSharpFiles);
@@ -350,6 +358,11 @@ namespace CrudGenerator {
             tabPage1Options.Show();
             showSettingsToolStripMenuItem.Visible = true;
             hideOptionsTabToolStripMenuItem.Visible = false;
+        }
+
+        private void chBxDropIfExists_CheckedChanged(object sender, EventArgs e)
+        {
+
         }
     }
 }

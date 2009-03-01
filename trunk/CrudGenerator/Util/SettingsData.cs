@@ -11,7 +11,8 @@ namespace CrudGenerator.Util
         /// <summary>The name of the session to be saved
         /// </summary>
         public string SettingName;
-        public string CodeNamespace;
+        public string NamespaceBL;
+        public string NamespaceDL;
         public string SprocPrefix;
         public string AuthorName;
         public string ServerName;
@@ -32,6 +33,7 @@ namespace CrudGenerator.Util
         }
         public string TableNameFilter;
         public bool SprocDropIfExists;
+        public bool ReadByIDIfUserIdColumnExists;
         public bool SprocCreate;
         public bool SprocRetrieveByID;
         public bool SprocRetrieveAll;
@@ -54,19 +56,20 @@ namespace CrudGenerator.Util
 
         public SettingsData() { }
 
-        public SettingsData(string settingName, string codeNamespace,
+        public SettingsData(string settingName, string namespaceBL, string nameSpaceDL,
             string sprocPrefix,string authorName,string serverName,
             string dbName, bool trustedConnection, string dbUsername,
             string dbPassword,string outputDirectory, string tableNameFilter,
             bool sprocDropIfExists, bool sprocCreate, bool sprocRetrieveByID,
             bool sprocRetrieveAll,bool sprocUpdate, bool sprocDelete, 
             bool sprocDeActivate,string deactivateColumnName,
-            bool resultsToFile, bool resultFileOverwrite, bool userIdIsParamForCRUBusinessLayer)
+            bool resultsToFile, bool resultFileOverwrite, bool userIdIsParamForCRUBusinessLayer, bool readByIDIfUserIdColumnExists)
         {
 
             //todo: initialize settingsData using input parameters.
              SettingName = settingName;
-             CodeNamespace = codeNamespace;
+             NamespaceBL = namespaceBL;
+             NamespaceDL = nameSpaceDL;
                 SprocPrefix = sprocPrefix;
                 AuthorName = authorName;
                 ServerName = serverName;
@@ -87,7 +90,7 @@ namespace CrudGenerator.Util
              ResultsToFile=resultsToFile;
              ResultFileOverwrite=resultFileOverwrite;
              UserIdIsParamForCRUBusinessLayer = userIdIsParamForCRUBusinessLayer;
-
+             ReadByIDIfUserIdColumnExists = readByIDIfUserIdColumnExists;
              if (!trustedConnection && !string.IsNullOrEmpty(serverName) && !string.IsNullOrEmpty(dbName) && !string.IsNullOrEmpty(dbUsername) && !string.IsNullOrEmpty(dbPassword))
                  ConnectionString = "Server=" + serverName + ";Database=" + dbName + ";uid=" + dbUsername + ";pwd=" + dbPassword + ";";
              else if(!string.IsNullOrEmpty(serverName) && !string.IsNullOrEmpty(dbName) )
@@ -156,7 +159,7 @@ namespace CrudGenerator.Util
                         
                     } 
                     catch(KeyNotFoundException ex){
-                        
+                        throw ex;
                     }
                 }
             // if nothing loaded, initialise with default settings  
