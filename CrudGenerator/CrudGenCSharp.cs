@@ -44,8 +44,6 @@ namespace CrudGenerator
            
         
         }
-
-      
         public void BuildCrudObject(){
             crudObject.AppendLine("using System;");
             crudObject.AppendLine("using System.Collections.Generic;");
@@ -53,6 +51,8 @@ namespace CrudGenerator
             crudObject.AppendLine("using System.Data;");
             crudObject.AppendLine("using System.Data.SqlClient;");
             crudObject.AppendLine("using System.Web.UI.WebControls;\r\n");
+            if (u.UserSettings.NamespaceBL != u.UserSettings.NamespaceDL)
+                crudObject.AppendFormat("using {0};\r\n", u.UserSettings.NamespaceDL);
             crudObject.AppendFormat("{1}//******************** {0} ****************************//{1}", _className, Environment.NewLine );
             crudObject.AppendFormat("\r\n namespace {0} {{\r\n", _namespace);
             crudObject.AppendFormat("public class {0}{{\r\n", _className );
@@ -63,7 +63,6 @@ namespace CrudGenerator
             crudObject.AppendFormat("}} //{0}\r\n", _className);
             crudObject.AppendFormat("\r\n}} //{0}", _namespace);
         }
-
         private void BuildCrudData() {
             crudData.AppendLine("using System;");
             crudData.AppendLine("using System.Collections.Generic;");
@@ -72,19 +71,18 @@ namespace CrudGenerator
             crudData.AppendLine("using System.Web;");
             crudData.AppendLine("using System.Web.UI.WebControls; //added so i can return a type listItem collection");
             crudData.AppendLine("using System.Web.Caching;\r\n");
-            crudData.AppendFormat("namespace {0} {{\r\n", _namespace);
-            crudData.AppendFormat("public class {0}Data{{\r\n", _className);
+            if(u.UserSettings.NamespaceBL != u.UserSettings.NamespaceDL)
+                crudData.AppendFormat("using {0};\r\n", u.UserSettings.NamespaceBL);
+            crudData.AppendLine();
+            crudData.AppendFormat("namespace {0} {{\r\n", u.UserSettings.NamespaceDL );
+            crudData.AppendFormat("\tpublic class {0}Data{{\r\n", _className);
             crudData.Append(BuildCrud_CreateDL(_cols));
-            crudData.AppendFormat("}} //{0}\r\n", _className);
+            BuildCrud_DL_ReadUpdateDelete();
+            BuildCrud_DL_ReaderToObject();
+            crudData.AppendFormat("\t}} //{0}\r\n", _className);
             crudData.AppendFormat("\r\n}} //{0}\r\n", _namespace);
         }
-
-        private void BuildCrudDAL(){
-
-        
-        }
-
-
+        private void BuildCrudDAL(){}
         private string BuildFields(List<Column> cols) {
             System.ComponentModel.TypeConverter tc = new System.ComponentModel.TypeConverter();
 
@@ -98,7 +96,6 @@ namespace CrudGenerator
 
             return result;
         }
-
         private string BuildProps(List<Column> cols)
         {
             System.ComponentModel.TypeConverter tc = new System.ComponentModel.TypeConverter();
@@ -146,14 +143,31 @@ namespace CrudGenerator
 
         private string BuildCRUD(List<Column> cols) {
             StringBuilder result= new StringBuilder().Append("#region CRUD\r\n");
-            string pattern = "\tpublic returnType ACTION(PARAMS){\r\n\t\t//TODO setup ACTION\r\n\t\t return returnDATA;\r\n\t}\r\n";
+           
             string create, retrieveByID,retrieveAll, update, delete;
-            create = retrieveByID = retrieveAll = update = delete = pattern;
+            create = retrieveByID = retrieveAll = update = delete = "";
             create = BuildCrud_CreateBL(cols);
-            retrieveByID = pattern.Replace("ACTION", "RetrieveByID").Replace("PARAMS", GetFieldsAsInputParams(cols, true)).Replace("returnDATA","new " + _className + "()").Replace("returnType",_className);
-            retrieveAll = pattern.Replace("ACTION", "RetrieveAll").Replace("PARAMS", "").Replace("returnDATA","new List<" + _className + ">()").Replace("returnType","List<" + _className + ">");
-            update = pattern.Replace("ACTION", "Update").Replace("PARAMS", "").Replace("returnDATA", "false").Replace("returnType", "bool");//GetInitialValueByType(GetFirstKeyColumn(cols)));
-            delete = pattern.Replace("ACTION", "Delete").Replace("PARAMS", "").Replace("returnDATA", "false").Replace("returnType", "bool");
+            
+            retrieveByID = "\tpublic int Create(Guid userId){\r\n"
+                + string.Format("\t\t return {0}Data.Create(this,userId);", _className   )
+                + "\t}\r\n";
+
+            retrieveAll = string.Format("\tpublic List<{0}> RetrieveAll(Guid userId){{\r\n", _className)
+                + string.Format("\t\t return {0}Data.RetrieveAll(this, userId);\r\n", _className)
+                + "\t}\r\n";
+
+            update = "\tpublic bool Update(Guid userId){{\r\n"
+                + string.Format("\t\t return {0}Data.Update(this, userId);\r\n", _className)
+                + "\t}\r\n";
+
+            Column identity = Column.GetIdentityColumn(_cols);
+            if (identity == null){
+                identity = new Column();
+                identity.Name = "NoIdentityColumn";
+            }
+            delete = string.Format("\tpublic static bool Delete(int {0},Guid userId){{\r\n", identity.Name )
+                + string.Format("\t\t return {0}Data.Update({1}, userId);\r\n", _className, identity.Name)
+                + "\t}\r\n";
             result.Append(create);
             result.Append(retrieveAll);
             result.Append(retrieveByID);
@@ -169,10 +183,10 @@ namespace CrudGenerator
             string result = "";
             //get the first key column's data type and use it as the return type 
             string primaryKeyDataType = GetFirstKeyColumn(cols).GetASPNetDataType()  ;
-            result = "\t///<summary>returns the id of the item which was just created</summary>\r\n"
-                + string.Format("\tpublic {0} Create({1}){{\r\n", primaryKeyDataType, (u.UserSettings.UserIdIsParamForCRUBusinessLayer)?"Guid userId":"" )
-                + string.Format("\t\t return {0}Data.Create({1}this);\r\n", _className, (u.UserSettings.UserIdIsParamForCRUBusinessLayer) ? "userId, " : "")
-                + "\t}\r\n\r\n";
+            result = "\t\t///<summary>returns the id of the item which was just created</summary>\r\n"
+                + string.Format("\t\tpublic {0} Create({1}){{\r\n", primaryKeyDataType, (u.UserSettings.UserIdIsParamForCRUBusinessLayer)?"Guid userId":"" )
+                + string.Format("\t\t\t return {0}Data.Create({1}this);\r\n", _className, (u.UserSettings.UserIdIsParamForCRUBusinessLayer) ? "userId, " : "")
+                + "\t\t}\r\n";
             return result;
         }
 
@@ -182,8 +196,8 @@ namespace CrudGenerator
             string result = "";
             //todo referenct the create stored procedure and pass to it parameters to create a new item and return id of the new entry
             Column pkCol = GetFirstKeyColumn(cols);
-            result = "///<summary>returns the id of the item which was just created</summary>\r\n"
-                + string.Format("public static {0} Create({1}{2} inputObj){{\r\n", pkCol.GetASPNetDataType(),
+            result = "\t///<summary>returns the id of the item which was just created</summary>\r\n"
+                + string.Format("\tpublic static {0} Create({1}{2} inputObj){{\r\n", pkCol.GetASPNetDataType(),
                     (u.UserSettings.UserIdIsParamForCRUBusinessLayer) ? "Guid userId," : "", _className)
                 + string.Format("\t using(SqlCommand cmd=new SqlCommand(\"{0}\")){{\r\n", CrudGenSPROC.GetSprocNameCreate(_tableName))
                 + "\t\t cmd.CommandType = CommandType.StoredProcedure;\r\n";
@@ -197,9 +211,116 @@ namespace CrudGenerator
             result += string.Format("\t\t return DataAccess.RunCmdReturn_{0}(cmd);\r\n", pkCol.GetASPNetDataType());
 
            result += string.Format("\t }} //close using statement \r\n")
-                + "}";
+                + "}\r\n";
             return result;
         }
+        /// <summary>
+        /// Builds the readAll, readById, update, and delete procedures.
+        /// Best practices: it uses as input only the identity column
+        /// because we are guaranteed that there will only be one of those in a table.  
+        /// As far as why not to use a primary key as input, that has to do with the fact that the number
+        /// of primary keys can vary according to how the table is designed and I don't see
+        /// a need to complicate this method.
+        /// </summary>
+        private void BuildCrud_DL_ReadUpdateDelete() {
+            Column identity = Column.GetIdentityColumn(_cols);
+            if (identity == null){
+                identity = new Column();
+                identity.Name = "NoIdentityColumn";
+            }
+            crudData.AppendFormat("	public static List<{0}> RetrieveAll(Guid userId) {{\r\n", _className);
+            crudData.AppendFormat("            List<{0}> result = new List<{0}>();\r\n", _className);
+            crudData.AppendFormat("            using (SqlCommand cmd = new SqlCommand(\"{0}\"))\r\n", CrudGenSPROC.GetSprocNameReadAll(_tableName) );
+            crudData.AppendLine("            {");
+            crudData.AppendLine("                cmd.CommandType = CommandType.StoredProcedure;");
+            crudData.AppendLine("                cmd.Parameters.AddWithValue(\"@userId\", userId);");
+            crudData.AppendLine("                SqlDataReader r = DataAccess.RunCMDGetDataReader(cmd);");
+            crudData.AppendLine("                while (r.Read()) {");
+            crudData.AppendLine("                    result.Add(convertReaderToObject(r));");
+            crudData.AppendLine("                }");
+            crudData.AppendLine("                r.Close();");
+            crudData.AppendLine("            } //close using statement ");
+            crudData.AppendLine("            return result;");
+            crudData.AppendLine("        }");
+            //todo get key column type and its variable name
+            crudData.AppendFormat("        public static {0} RetrieveByID(int {1}, Guid userId){{\r\n", _className, identity.Name  );
+            crudData.AppendFormat("            {0}  result=null;\r\n", _className);
+            crudData.AppendFormat("            using (SqlCommand cmd = new SqlCommand(\"{0}\"))\r\n", CrudGenSPROC.GetSprocNameReadById(_tableName));
+            crudData.AppendLine("            {");
+            crudData.AppendLine("                cmd.CommandType = CommandType.StoredProcedure;");
+            crudData.AppendFormat("                cmd.Parameters.AddWithValue(\"@{0}\", {0});\r\n", identity.Name);
+            crudData.AppendLine("                cmd.Parameters.AddWithValue(\"@userId\", userId);");
+            crudData.AppendLine("                SqlDataReader r = DataAccess.RunCMDGetDataReader(cmd);");
+            crudData.AppendLine("                if (r.Read())");
+            crudData.AppendLine("                    result = convertReaderToObject(r);");
+            crudData.AppendLine("                r.Close();");
+            crudData.AppendLine("            } //close using statement ");
+            crudData.AppendLine("            return result;");
+            crudData.AppendLine("        }");
+            crudData.AppendLine("");
+            crudData.AppendFormat("        public static Boolean Update({0} obj,Guid userId) {{\r\n", _className);
+            crudData.AppendLine("            bool result = false;");
+            crudData.AppendFormat("            using (SqlCommand cmd = new SqlCommand(\"{0}\"))\r\n", CrudGenSPROC.GetSprocNameUpdate(_tableName));
+            crudData.AppendLine("            {");
+            crudData.AppendLine("                cmd.CommandType = CommandType.StoredProcedure;");
+            foreach (Column c in _cols)
+                crudData.AppendFormat("                cmd.Parameters.AddWithValue(\"@{0}\", obj.{0});\r\n", GetPropName(c));
+            
+            crudData.AppendLine("                cmd.Parameters.Add(\"@rowsAffected\");\r\n");
+            crudData.AppendLine("                cmd.Parameters[\"@rowsAffected\"].Direction = ParameterDirection.ReturnValue;");
+            crudData.AppendLine("                SqlDataReader r = DataAccess.RunCMDGetDataReader(cmd);");
+            crudData.AppendLine("                if (cmd.Parameters[\"@rowsAffected\"].Value.ToString() == \"1\") result = true;");
+            crudData.AppendLine("                SqlDataReader r = DataAccess.RunCMDGetDataReader(cmd);");
+            crudData.AppendLine("                r.Close();");
+            crudData.AppendLine("            } //close using statement ");
+            crudData.AppendLine("            return result;");
+            crudData.AppendLine("        }\r\n");
+
+            crudData.AppendFormat("        public static Boolean Delete(int {0}, Guid userId){{\r\n", identity.Name);
+            crudData.AppendLine("            bool result = false;");
+            crudData.AppendLine("            using (SqlCommand cmd = new SqlCommand(\"finance_tblEnvelop_Delete\")){\r\n");
+            crudData.AppendLine("                cmd.CommandType = CommandType.StoredProcedure;");
+            crudData.AppendFormat("                cmd.Parameters.AddWithValue(\"@{0}\", {0});\r\n", identity.Name);
+            crudData.AppendLine("                cmd.Parameters.AddWithValue(\"@userId\", userId);");
+            crudData.AppendLine("                cmd.Parameters.Add(\"@rowsAffected\");");
+            crudData.AppendLine("                cmd.Parameters[\"@rowsAffected\"].Direction = ParameterDirection.ReturnValue;");
+            crudData.AppendLine("");
+            crudData.AppendLine("                SqlDataReader r = DataAccess.RunCMDGetDataReader(cmd);");
+            crudData.AppendLine("                if (cmd.Parameters[\"@rowsAffected\"].Value.ToString() == \"1\") result = true;");
+            crudData.AppendLine("                //todo set the return value to true or false based on what the stored procedure returns as ");
+            crudData.AppendLine("                r.Close();");
+            crudData.AppendLine("                            } //close using statement ");
+            crudData.AppendLine("            return result;");
+            crudData.AppendLine("        }");
+                    
+        
+        }
+        private void BuildCrud_DL_ReaderToObject() { 
+
+            crudData.AppendFormat("private static {0} convertReaderToObject(SqlDataReader r){{\r\n", _className );
+            
+            crudData.AppendFormat("    return new {0}({1});\r\n}}", _className, BuildCrud_DL_ReaderToObjectColumns()  );
+        
+            //      r.ToGuid("envelopId"),  r.ToGuid("userId"),
+            //      r.ToInt("envelopNo"), r.ToString("envelopName"),
+            //      r.ToString("envelopDesc"), r.ToGuid("parentEnvelopId"));
+        }
+        private string BuildCrud_DL_ReaderToObjectColumns(){
+            string result = "";
+            foreach (Column c in _cols)
+            {
+                if (result != "") result += ",\r\n\t\t\t";
+                string dataType = c.GetASPNetDataType();
+                //make data type init capped because the r.ToString method is pascal cased.
+                dataType = dataType.Substring(0, 1).ToUpper() + dataType.Substring(1);
+                result += string.Format("r.To{0}(\"{1}\")", dataType, c.Name);
+            }
+            return result;
+
+        
+        }
+
+        
         private Column GetFirstKeyColumn(List<Column> cols) {
             Column keyCol = null;
             foreach (Column c in cols) {
