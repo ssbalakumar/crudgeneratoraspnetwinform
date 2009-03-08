@@ -52,13 +52,7 @@ namespace CrudGenerator {
         public List<Column> GetAllColumns() {
             return columns;
         }
-        public Column GetIdentityColumn() {
-            foreach (Column column in columns) {
-                if (column.IsIdentity)
-                    return column;
-            }
-            return null;
-        }
+      
         public List<Column> GetNotIdentity() {
             List<Column> list = new List<Column>();
             foreach (Column column in columns) {
@@ -244,7 +238,7 @@ namespace CrudGenerator {
 
             first = DeclareColumnList(sb, nonIdentity, true);
 
-            Column identity = GetIdentityColumn();
+            Column identity = Column.GetIdentityColumn(columns);
 
             if (identity != null) {
                 DeclareColumn(sb, identity, first, true);

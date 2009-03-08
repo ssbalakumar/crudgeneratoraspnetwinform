@@ -67,7 +67,15 @@ namespace CrudGenerator {
             
             }
         }
-
+        public static Column GetIdentityColumn(List<Column> columns)
+        {
+            foreach (Column column in columns)
+            {
+                if (column.IsIdentity)
+                    return column;
+            }
+            return null;
+        }
         /// <summary>Returns the ASPNET data type which correspond's to the column.  Example: varchar is string.</summary>
         public string GetASPNetDataType()
         {
