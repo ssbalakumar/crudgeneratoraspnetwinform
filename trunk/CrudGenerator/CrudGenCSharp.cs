@@ -196,8 +196,6 @@ namespace CrudGenerator
         /// <summary>Create should return the datatype of the current </summary>
         private void BuildCrud_CreateDL()
         {
-            
-            //todo referenct the create stored procedure and pass to it parameters to create a new item and return id of the new entry
             Column pkCol = GetFirstIdentityColumn(_cols);
             crudData.Append("\t///<summary>returns the id of the item which was just created</summary>\r\n"
                 + string.Format("\tpublic static {0} Create({1} obj{2}){{\r\n"
@@ -238,11 +236,12 @@ namespace CrudGenerator
             crudData.AppendLine("            {");
             crudData.AppendLine("                cmd.CommandType = CommandType.StoredProcedure;");
             crudData.AppendLine("                cmd.Parameters.AddWithValue(\"@userId\", userId);");
-            crudData.AppendLine("                SqlDataReader r = DataAccess.RunCMDGetDataReader(cmd);");
-            crudData.AppendLine("                while (r.Read()) {");
-            crudData.AppendLine("                    result.Add(convertReaderToObject(r));");
-            crudData.AppendLine("                }");
-            crudData.AppendLine("                r.Close();");
+            crudData.AppendLine("                try{");
+            crudData.AppendLine("                   SqlDataReader r = DataAccess.RunCMDGetDataReader(cmd);");
+            crudData.AppendLine("                   while (r.Read()) ");
+            crudData.AppendLine("                        result.Add(convertReaderToObject(r));");
+            crudData.AppendLine("                   r.Close();");
+            crudData.AppendLine("                } catch (Exception ex) {throw ex; }");
             crudData.AppendLine("            } //close using statement ");
             crudData.AppendLine("            return result;");
             crudData.AppendLine("        }");
