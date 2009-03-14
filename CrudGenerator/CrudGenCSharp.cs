@@ -395,10 +395,11 @@ namespace CrudGenerator
         private string GetInitialValueByType(Column c) {
             SqlDbType type = c.SqlDbTypeOfColumn ;
             string result = "\"\"";
-            switch (type) { 
+            switch (type) {
+                case SqlDbType.Bit:
+                    result = "false"; break;
                 case SqlDbType.BigInt :
-                case SqlDbType.Binary:
-                case SqlDbType.Bit:               
+                case SqlDbType.Binary:             
                 case SqlDbType.Decimal:
                 case SqlDbType.Float:
                 case SqlDbType.Int :
