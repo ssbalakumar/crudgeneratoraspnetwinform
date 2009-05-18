@@ -412,7 +412,7 @@ namespace CrudGenerator
                     result = "0";break;
                 case SqlDbType.Char:
                 case SqlDbType.NChar:
-                    result = "''";break;
+                    result = "' '";break;
                 case SqlDbType.VarChar:
                 case SqlDbType.NText:
                 case SqlDbType.NVarChar:
