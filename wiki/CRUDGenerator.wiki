@@ -10,7 +10,7 @@ This tool will automatically create stored procedures and C# code to handle comm
   # *U* p d a te
   # *D* e l e t e
 
-The purpose of this tool is to speed up development by leveraging the database schema as a starting point for C# objects.  It also creates a DataLayer which integrate nicely with the generated stored procedures and Business Layer.
+The purpose of this tool is to speed up development by leveraging the database schema as a starting point for C# objects.  It also creates a Data Layer which integrate nicely with the generated stored procedures and Business Layer.
 
 The business layer is the C# object which the table columns as its properties.  Any additional behaviors can be added to this class.
 
