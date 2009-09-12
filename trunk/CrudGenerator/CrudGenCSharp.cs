@@ -268,8 +268,8 @@ namespace CrudGenerator
             crudData.AppendLine("                cmd.CommandType = CommandType.StoredProcedure;");
 
             crudData_AddSprocParams(crudData);
-            
-            crudData.AppendLine("                cmd.Parameters.Add(\"@rowsAffected\");\r\n");
+
+            crudData.AppendLine("                cmd.Parameters.Add(\"@rowsAffected\", SqlDbType.Int);\r\n");
             crudData.AppendLine("                cmd.Parameters[\"@rowsAffected\"].Direction = ParameterDirection.ReturnValue;");
             crudData.AppendLine("                SqlDataReader r = DataAccess.RunCMDGetDataReader(cmd);");
             crudData.AppendLine("                if (cmd.Parameters[\"@rowsAffected\"].Value.ToString() == \"1\") result = true;");
