@@ -4,7 +4,9 @@ using System.Text;
 using System.Data;
 
 namespace CrudGenerator {
-    public class Column {
+    public class Column
+    {
+        #region fieldsAndProps 
         string name = string.Empty;
         private SqlDbType _sqlDbTypeOfColumn = SqlDbType.Structured;
         public string Name {
@@ -29,6 +31,9 @@ namespace CrudGenerator {
             get { return dataType; }
             set { dataType = value; }
         }
+
+        public bool IsComputed { get;  set; }
+        #endregion
 
         /// <summary>
         /// This is useful for determining if a table has a refernce to the userID, so i can create a crud to retrieve records by userId
@@ -56,10 +61,10 @@ namespace CrudGenerator {
                 sqlDbTypeFriendlyStr = sqlDbTypeFriendlyStr.Replace("binary", "Binary").Replace("varChar", "VarChar");
                 sqlDbTypeFriendlyStr = sqlDbTypeFriendlyStr.Replace("text", "Text").Replace("time", "Time");
                 sqlDbTypeFriendlyStr = sqlDbTypeFriendlyStr.Replace("Numeric", "Decimal");
-                if (sqlDbTypeFriendlyStr.Contains(" "))
+                if (sqlDbTypeFriendlyStr.Contains("("))
                 {
                     //get string before space
-                    sqlDbTypeFriendlyStr = sqlDbTypeFriendlyStr.Substring(0, sqlDbTypeFriendlyStr.IndexOf(' '));
+                    sqlDbTypeFriendlyStr = sqlDbTypeFriendlyStr.Substring(0, sqlDbTypeFriendlyStr.IndexOf('('));
                 }
 
                 _sqlDbTypeOfColumn = (SqlDbType)Enum.Parse(typeof(SqlDbType), sqlDbTypeFriendlyStr);

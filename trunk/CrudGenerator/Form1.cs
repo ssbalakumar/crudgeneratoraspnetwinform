@@ -364,5 +364,12 @@ namespace CrudGenerator {
         {
 
         }
+
+        private void chkSendOutputToFiles_CheckedChanged(object sender, EventArgs e)
+        {
+
+            txtOutputDirectory.Enabled = chkSendOutputToFiles.Checked;
+            button2SelectFolder.Enabled = chkSendOutputToFiles.Checked;
+        }
     }
 }
