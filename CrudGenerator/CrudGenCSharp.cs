@@ -211,7 +211,7 @@ namespace CrudGenerator
             //    //todo: convert the value from theinput object to database friendly value... this means need to have a ToDBFriendly method
             //}
 
-            crudData_AddSprocParams(crudData);
+            crudData_AddSprocParams(crudData, true);
             crudData.AppendFormat("\t\t return DataAccess.RunCmdReturn_{0}(cmd);\r\n", pkCol.GetASPNetDataType());
 
             crudData.AppendLine("\t } //close using statement \r\n}");
@@ -267,7 +267,7 @@ namespace CrudGenerator
             crudData.AppendLine("            {");
             crudData.AppendLine("                cmd.CommandType = CommandType.StoredProcedure;");
 
-            crudData_AddSprocParams(crudData);
+            crudData_AddSprocParams(crudData, true);
 
             crudData.AppendLine("                cmd.Parameters.Add(\"@rowsAffected\", SqlDbType.Int);\r\n");
             crudData.AppendLine("                cmd.Parameters[\"@rowsAffected\"].Direction = ParameterDirection.ReturnValue;");
@@ -297,15 +297,20 @@ namespace CrudGenerator
                     
         
         }
-        private void crudData_AddSprocParams(StringBuilder sb)
+        private void crudData_AddSprocParams(StringBuilder sb, bool excludeComputedColumns)
         {
             foreach (Column c in _cols)
             {
                 string handledString;
-                if (c.SqlDbTypeOfColumn == SqlDbType.DateTime)
-                    handledString = string.Format("DataAccess.StringToDB(obj.{0}.ToString(), SqlDbType.DateTime)", GetPropName(c));
-                else handledString = "obj." + GetPropName(c);
-                sb.AppendFormat("                cmd.Parameters.AddWithValue(\"@{0}\", {1});\r\n", c.Name, handledString);
+                if (excludeComputedColumns == true && c.IsComputed){
+                    //skipped computedColumns from the argument list
+                }else
+                {
+                    if (c.SqlDbTypeOfColumn == SqlDbType.DateTime)
+                        handledString = string.Format("DataAccess.StringToDB(obj.{0}.ToString(), SqlDbType.DateTime)", GetPropName(c));
+                    else handledString = "obj." + GetPropName(c);
+                    sb.AppendFormat("                cmd.Parameters.AddWithValue(\"@{0}\", {1});\r\n", c.Name, handledString);
+                }
             }
         }
         private void BuildCrud_DL_ReaderToObject() { 

@@ -44,7 +44,7 @@ namespace CrudGenerator {
         public List<Column> GetNotPrimaryKeysAndNotIdentity() {
             List<Column> list = new List<Column>();
             foreach (Column column in columns) {
-                if (!column.IsPrimaryKey && !column.IsIdentity)
+                if (!column.IsPrimaryKey && !column.IsIdentity && !column.IsComputed)
                     list.Add(column);
             }
             return list;
@@ -57,6 +57,17 @@ namespace CrudGenerator {
             List<Column> list = new List<Column>();
             foreach (Column column in columns) {
                 if (!column.IsIdentity)
+                    list.Add(column);
+            }
+            return list;
+        }
+
+        public List<Column> GetNotIdentityAndNonComputed()
+        {
+            List<Column> list = new List<Column>();
+            foreach (Column column in columns)
+            {
+                if (!column.IsIdentity && !column.IsComputed) 
                     list.Add(column);
             }
             return list;
@@ -80,6 +91,8 @@ namespace CrudGenerator {
                 column.IsIdentity = ((int)dr["IsIdentity"] == 1);
                 column.IsPrimaryKey = ((int)dr["IsPrimaryKey"] == 1);
                 column.DataType = dr["DataType"].ToString();
+                if (dr["isComputed"].ToString() == "1") 
+                    column.IsComputed = true;
                 table.Columns.Add(column);
             }
             return tables;
@@ -109,7 +122,7 @@ namespace CrudGenerator {
 
             PK_WhereClause(sb);
 
-            sb.Append("\r\nEnd\r\n");
+            sb.Append("\r\nEnd\r\nGo\r\n");
 
             return sb.ToString();
         }
@@ -130,7 +143,7 @@ namespace CrudGenerator {
 
             sb.Append("\r\n\tfrom ");
             sb.Append(this.tableName);
-            sb.Append("\r\nEnd\r\n");
+            sb.Append("\r\nEnd\r\nGo\r\n");
 
             return sb.ToString();
         }
@@ -151,7 +164,7 @@ namespace CrudGenerator {
             sb.Append("\r\n\tfrom ");
             sb.Append(this.tableName);
             WriteWhereConditionForUserIDCols(sb, userIdCols);
-            sb.Append("\r\nEnd\r\n");
+            sb.Append("\r\nEnd\r\nGo\r\n");
 
             return sb.ToString();
         }
@@ -199,7 +212,7 @@ namespace CrudGenerator {
 
             PK_WhereClause(sb);
 
-            sb.Append("\r\nEnd\r\n");
+            sb.Append("\r\nEnd\r\nGo\r\n");
 
             return sb.ToString();
         }
@@ -221,7 +234,7 @@ namespace CrudGenerator {
 
             PK_WhereClause(sb);
 
-            sb.Append("\r\nEnd\r\n");
+            sb.Append("\r\nEnd\r\nGo\r\n");
 
             return sb.ToString();
         }
@@ -234,7 +247,7 @@ namespace CrudGenerator {
             sb.Append(this.tableName);
             sb.Append("_Create\r\n");
             bool first;
-            List<Column> nonIdentity = GetNotIdentity();
+            List<Column> nonIdentity = GetNotIdentityAndNonComputed();
 
             first = DeclareColumnList(sb, nonIdentity, true);
 
@@ -268,7 +281,7 @@ namespace CrudGenerator {
                 sb.Append(identity.Name);
                 sb.Append(" = SCOPE_IDENTITY()\r\n");
             }
-            sb.Append("End\r\n");
+            sb.Append("End\r\nGo\r\n");
 
             return sb.ToString();
         }
@@ -294,7 +307,7 @@ namespace CrudGenerator {
 
             PK_WhereClause(sb);
 
-            sb.Append("\r\nEnd\r\n");
+            sb.Append("\r\nEnd\r\nGo\r\n");
 
             return sb.ToString();
         }
