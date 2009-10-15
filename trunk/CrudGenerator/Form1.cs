@@ -268,6 +268,8 @@ namespace CrudGenerator {
             txtAuthor.Text = s.AuthorName;
             txtNamespaceBL.Text = s.NamespaceBL;
             txtNamespaceDL.Text = s.NamespaceDL;
+            checkBox1OverWriteExisting.Checked = s.ResultFileOverwrite;
+            checkBox1GuidIsCrudParam.Checked = s.UserIdIsParamForCRUBusinessLayer;
 
         }
         #region C# crud
@@ -281,7 +283,7 @@ namespace CrudGenerator {
             DataTable dt = GetColumns();
             List<CrudGenSPROC> tables = CrudGenSPROC.ParseDataTable(dt);
             foreach (CrudGenSPROC tbl in tables) {
-              cSharpFiles.Add( new CrudGenCSharp(u.UserSettings.NamespaceBL, tbl.TableName , tbl.Columns ));    
+              cSharpFiles.Add( new CrudGenCSharp(tbl.TableName , tbl.Columns ));    
             }
 
             GenerateFiles(cSharpFiles);
@@ -310,7 +312,7 @@ namespace CrudGenerator {
             FileSaver fs = new FileSaver();
             foreach (CrudGenCSharp cs in cSharpFiles)
             {
-                //todo output BL and DL 
+                //output BL and DL 
                 if (u.UserSettings.ResultsToFile)
                 {
                     fs.SaveFile(u.UserSettings.OutputDirectory + cs.ClassName + ".cs", cs.CrudObject, u.UserSettings.ResultFileOverwrite);
@@ -320,13 +322,24 @@ namespace CrudGenerator {
                 {
                     txtC_BL.Text += cs.CrudObject;
                     txtC_DL.Text += cs.CrudData;
-                }
-                
+                }                
             }
-            //save DataReaderExtensions
-            fs.SaveFile(u.UserSettings.OutputDirectory + "DataReaderExtensions.cs", CrudGenCSharp.GetDataReaderExtensions(), true);
 
-            txtC_DAL.Text="Under construction";
+
+            if (u.UserSettings.ResultsToFile)
+            {
+                //save DataReaderExtensions
+                fs.SaveFile(u.UserSettings.OutputDirectory + "DataReaderExtensions.cs", CrudGenCSharp.GetDataReaderExtensions(), true);
+                //save the Data Layer
+                fs.SaveFile(u.UserSettings.OutputDirectory + "DataAccessLayer.cs", CrudGenCSharp.GetDataAccessLayer(), true);
+            }
+            else 
+            {
+                txtC_DAL.Text = CrudGenCSharp.GetDataAccessLayer();
+                txtC_DAL.Text +="\r\n\r\n\\\\\\\\\\\\\\********************************" 
+                    + CrudGenCSharp.GetDataReaderExtensions(); 
+            }
+            
         
         }
 

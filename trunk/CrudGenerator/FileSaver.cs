@@ -15,6 +15,10 @@ namespace CrudGenerator
         /// <returns></returns>
         public bool SaveFile(string fileName, string content, bool overwriteExisting) {
             bool success=false;
+            //if folder doesn't exist build the tree
+            FileInfo fi = new FileInfo(fileName);
+            if (!fi.Directory.Exists)
+                fi.Directory.Create();
             if (!overwriteExisting)
                 fileName=GetNonConflictingFileName(fileName);
             using (TextWriter tw = new StreamWriter(fileName) ) { 

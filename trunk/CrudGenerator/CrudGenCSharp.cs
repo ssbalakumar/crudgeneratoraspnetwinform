@@ -13,11 +13,13 @@ namespace CrudGenerator
     class CrudGenCSharp
     {
 
+        /// <summary>This is the businessObject</summary>
         StringBuilder crudObject=new StringBuilder();
+        /// <summary>This is the data object</summary>
         StringBuilder crudData=new StringBuilder();
         /// <summary>Data Access Layer</summary>
         StringBuilder crudDAL=new StringBuilder();
-        string _namespace;
+
         /// <summary>synonymous with the tableName, except it chops off anything before _tbl as in Finance_tblAccount -- becomes account</summary>
         string _className;
         string _tableName; //the table name is used to extrapolate the name of the crud stored procedure
@@ -28,9 +30,9 @@ namespace CrudGenerator
         public string CrudData { get { return crudData.ToString(); } }
 
         public CrudGenCSharp() { }
-        public CrudGenCSharp(string nameSpace, string tableName, List<Column> cols)
+        public CrudGenCSharp(string tableName, List<Column> cols)
         {
-            _namespace=nameSpace;
+            
             _tableName = tableName;
             //if class name has _tbl in it, name the class using whatever is after the tbl part.
             if (tableName.Contains("_tbl"))
@@ -55,14 +57,14 @@ namespace CrudGenerator
                 crudObject.AppendFormat("using {0};\r\n", u.UserSettings.NamespaceDL);
             crudObject.AppendLine();
             crudObject.AppendFormat("{1}//******************** {0} ****************************//{1}", _className, Environment.NewLine );
-            crudObject.AppendFormat("\r\n namespace {0} {{\r\n", _namespace);
+            crudObject.AppendFormat("\r\n namespace {0} {{\r\n", u.UserSettings.NamespaceBL);
             crudObject.AppendFormat("public partial class {0}{{\r\n", _className );
             crudObject.Append(BuildFields(_cols));
             crudObject.Append(BuildProps(_cols) );
             crudObject.Append(BuildConstructor(_cols, _className));
             crudObject.Append(BuildCRUD(_cols));
             crudObject.AppendFormat("}} //{0}\r\n", _className);
-            crudObject.AppendFormat("\r\n}} //{0}", _namespace);
+            crudObject.AppendFormat("\r\n}} //{0}", u.UserSettings.NamespaceBL);
         }
         private void BuildCrudData() {
             crudData.AppendLine("using System;");
@@ -81,7 +83,7 @@ namespace CrudGenerator
             BuildCrud_DL_ReadUpdateDelete();
             BuildCrud_DL_ReaderToObject();
             crudData.AppendFormat("\t}} //{0}\r\n", _className);
-            crudData.AppendFormat("\r\n}} //{0}\r\n", _namespace);
+            crudData.AppendFormat("\r\n}} //{0}\r\n", u.UserSettings.NamespaceDL);
         }
         private void BuildCrudDAL(){}
         private string BuildFields(List<Column> cols) {
@@ -154,7 +156,9 @@ namespace CrudGenerator
                 identityCol.Name = "NoIdentityColumnInTable_NeedManualSetup";
             }
 
-            create = "\tpublic int Create(Guid userId){\r\n"
+
+
+            create = string.Format("\tpublic {0} Create(Guid userId){\r\n", identityCol.GetASPNetDataType())
                 + string.Format("\t\t return {0}Data.Create(this,userId);", _className   )
                 + "\t}\r\n";
 
@@ -162,8 +166,8 @@ namespace CrudGenerator
                 + string.Format("\t\t return {0}Data.RetrieveAll(userId);\r\n", _className)
                 + "\t}\r\n";
 
-            retrieveByID = string.Format("\tpublic static {0} RetrieveById(int {1}, Guid userId){{\r\n", _className, identityCol.Name )
-                + string.Format("\t\t return {0}Data.RetrieveById({1}, userId);\r\n", _className,identityCol.Name )
+            retrieveByID = string.Format("\tpublic static {0} RetrieveById(int {1}, Guid userId){{\r\n", _className, identityCol.Name)
+                + string.Format("\t\t return {0}Data.RetrieveById({1}, userId);\r\n", _className, identityCol.Name)
                 + "\t}\r\n";
 
             update = "\tpublic bool Update(Guid userId){\r\n"
@@ -196,10 +200,15 @@ namespace CrudGenerator
         /// <summary>Create should return the datatype of the current </summary>
         private void BuildCrud_CreateDL()
         {
-            Column pkCol = GetFirstIdentityColumn(_cols);
+            Column identityCol = Column.GetIdentityColumn(_cols);
+            if (identityCol == null)
+            {
+                identityCol = new Column();
+                identityCol.Name = "NoIdentityColumnInTable_NeedManualSetup";
+            }
             crudData.Append("\t///<summary>returns the id of the item which was just created</summary>\r\n"
                 + string.Format("\tpublic static {0} Create({1} obj{2}){{\r\n"
-                    , pkCol.GetASPNetDataType()
+                    , identityCol.GetASPNetDataType()
                     , _className
                     , (u.UserSettings.UserIdIsParamForCRUBusinessLayer) ? ",Guid userId" : "")
                 + string.Format("\t using(SqlCommand cmd=new SqlCommand(\"{0}\")){{\r\n", CrudGenSPROC.GetSprocNameCreate(_tableName))
@@ -212,7 +221,7 @@ namespace CrudGenerator
             //}
 
             crudData_AddSprocParams(crudData, true);
-            crudData.AppendFormat("\t\t return DataAccess.RunCmdReturn_{0}(cmd);\r\n", pkCol.GetASPNetDataType());
+            crudData.AppendFormat("\t\t return DataAccess.RunCmdReturn_{0}(cmd);\r\n", identityCol.GetASPNetDataType());
 
             crudData.AppendLine("\t } //close using statement \r\n}");
         }
@@ -297,6 +306,10 @@ namespace CrudGenerator
                     
         
         }
+
+
+ 
+
         private void crudData_AddSprocParams(StringBuilder sb, bool excludeComputedColumns)
         {
             foreach (Column c in _cols)
@@ -336,19 +349,7 @@ namespace CrudGenerator
         }
 
         
-        private Column GetFirstIdentityColumn(List<Column> cols) {
-            Column keyCol = null;
-            foreach (Column c in cols) {
-                if (c.IsIdentity)
-                {
-                    keyCol = c;
-                    break;
-                }
-            }
-
-            if (keyCol == null) keyCol = cols[0];
-            return keyCol;
-        }
+        
         private string GetFieldsAsInputParams(List<Column> cols) {
             return GetFieldsAsInputParams(cols, false);
         }
@@ -437,7 +438,231 @@ namespace CrudGenerator
         }
 
         public static string GetDataAccessLayer() {
-            return "";
+            StringBuilder crudDAL = new StringBuilder();
+            crudDAL.AppendLine("using System;");
+            crudDAL.AppendLine("using System.Collections.Generic;");
+            crudDAL.AppendLine("using System.Data;");
+            crudDAL.AppendLine("using System.Data.SqlClient;");
+            crudDAL.AppendLine("using System.Web;");
+            crudDAL.AppendLine("using System.Configuration;");
+            crudDAL.AppendFormat("namespace {0} \r\n", u.UserSettings.NamespaceDL);
+            crudDAL.AppendLine("{");
+            crudDAL.AppendLine("    public class DataAccess");
+            crudDAL.AppendLine("    {");
+            crudDAL.AppendLine("        private static string _connString;");
+            crudDAL.AppendLine("        public static string ConnString {");
+            crudDAL.AppendLine("            get {");
+            crudDAL.AppendLine("                ");
+            crudDAL.AppendLine("                if (string.IsNullOrEmpty(_connString) && ConfigurationManager.ConnectionStrings.Count >0)");
+            crudDAL.AppendLine("                {");
+            crudDAL.AppendLine("                    for (int i = 0; i < ConfigurationManager.ConnectionStrings.Count; i++)");
+            crudDAL.AppendLine("                    {");
+            crudDAL.AppendLine("                        //todo: change the customDefaultConnectionstring name to what you would like your datalayer to use when you don't provide a Connectionstring in your sqlCommand");
+            crudDAL.AppendLine("                        if (ConfigurationManager.ConnectionStrings[i].Name.Contains(\"CustomDefaultConnectionString\")) ");
+            crudDAL.AppendLine("                        {");
+            crudDAL.AppendLine("                            _connString = ConfigurationManager.ConnectionStrings[i].ConnectionString;");
+            crudDAL.AppendLine("                        }");
+            crudDAL.AppendLine("                    }    ");
+            crudDAL.AppendLine("                }    ");
+            crudDAL.AppendLine("                return _connString;");
+            crudDAL.AppendLine("            }");
+            crudDAL.AppendLine("            set { _connString = value; }");
+            crudDAL.AppendLine("        }");
+            crudDAL.AppendLine("");
+            crudDAL.AppendLine("        /// <summary>Returns true if your stored procedure runs and returns no errors.</summary>");
+            crudDAL.AppendLine("        ///   <returns>The stored proc should return 1 to indicate success and 0 to indicate failure");
+            crudDAL.AppendLine("        ///   </returns>");
+            crudDAL.AppendLine("        /// ");
+            crudDAL.AppendLine("        public static bool RunActionCmdReturnBool(SqlCommand cmd)");
+            crudDAL.AppendLine("        {");
+            crudDAL.AppendLine("            bool result = false;");
+            crudDAL.AppendLine("");
+            crudDAL.AppendLine("            SqlParameter returnParam = new SqlParameter(\"@RETURN_VALUE\", SqlDbType.Int);");
+            crudDAL.AppendLine("            returnParam.Direction = ParameterDirection.ReturnValue ;");
+            crudDAL.AppendLine("            cmd.Parameters.Add(returnParam);");
+            crudDAL.AppendLine("");
+            crudDAL.AppendLine("            ");
+            crudDAL.AppendLine("            if (cmd.Connection == null) ");
+            crudDAL.AppendLine("                cmd.Connection = new SqlConnection(ConnString);");
+            crudDAL.AppendLine("            if (cmd.Connection.State == ConnectionState.Closed)");
+            crudDAL.AppendLine("                cmd.Connection.Open();");
+            crudDAL.AppendLine("");
+            crudDAL.AppendLine("            using (SqlDataReader r = cmd.ExecuteReader(CommandBehavior.CloseConnection))");
+            crudDAL.AppendLine("            {");
+            crudDAL.AppendLine("");
+            crudDAL.AppendLine("                if (returnParam.Value == DBNull.Value)");
+            crudDAL.AppendLine("                    result = false;");
+            crudDAL.AppendLine("                else if (returnParam.Value.ToString() == \"1\")");
+            crudDAL.AppendLine("                    result = true;");
+            crudDAL.AppendLine("                else if (returnParam.Value != DBNull.Value)");
+            crudDAL.AppendLine("                    bool.TryParse(returnParam.Value.ToString(), out result);");
+            crudDAL.AppendLine("                r.Close();");
+            crudDAL.AppendLine("            }");
+            crudDAL.AppendLine("            cmd.Dispose();");
+            crudDAL.AppendLine("            return result;");
+            crudDAL.AppendLine("        }");
+            crudDAL.AppendLine("");
+            crudDAL.AppendLine("        /// <summary>");
+            crudDAL.AppendLine("        /// assumes that one of the parameterDirections is output or inputoutput.  If there are more than one, it returns the first one.  If none, it returns 0.");
+            crudDAL.AppendLine("        /// </summary>");
+            crudDAL.AppendLine("        /// <param name=\"cmd\"></param>");
+            crudDAL.AppendLine("        public static int RunCmdReturn_int(SqlCommand cmd){");
+            crudDAL.AppendLine("            int result = 0;");
+            crudDAL.AppendLine("            SqlParameter returnParam = GetOutputParameter(cmd.Parameters);            ");
+            crudDAL.AppendLine("");
+            crudDAL.AppendLine("            if (cmd.Connection == null)");
+            crudDAL.AppendLine("                cmd.Connection = new SqlConnection(ConnString);");
+            crudDAL.AppendLine("            if (cmd.Connection.State == ConnectionState.Closed)");
+            crudDAL.AppendLine("                cmd.Connection.Open();");
+            crudDAL.AppendLine("");
+            crudDAL.AppendLine("            int i = cmd.ExecuteNonQuery();");
+            crudDAL.AppendLine("            if (returnParam!=null)");
+            crudDAL.AppendLine("              result = (returnParam.Value == DBNull.Value) ? 0: (int)returnParam.Value;");
+            crudDAL.AppendLine("          ");
+            crudDAL.AppendLine("            cmd.Dispose();");
+            crudDAL.AppendLine("");
+            crudDAL.AppendLine("            return result;");
+            crudDAL.AppendLine("        }");
+            crudDAL.AppendLine("");
+            crudDAL.AppendLine("");
+            crudDAL.AppendLine("        private static SqlParameter GetOutputParameter(SqlParameterCollection sqlParameters) {");
+            crudDAL.AppendLine("            SqlParameter returnParam = null;");
+            crudDAL.AppendLine("            SqlParameter inoutParam = null;");
+            crudDAL.AppendLine("            foreach (SqlParameter p in sqlParameters)");
+            crudDAL.AppendLine("            {");
+            crudDAL.AppendLine("                if (p.Direction == ParameterDirection.Output)");
+            crudDAL.AppendLine("                    returnParam = p;");
+            crudDAL.AppendLine("                if (p.Direction == ParameterDirection.InputOutput)");
+            crudDAL.AppendLine("                    inoutParam = p;");
+            crudDAL.AppendLine("            }");
+            crudDAL.AppendLine("            //if the return parameter is not defined but there is an inputoutput parameter present, ");
+            crudDAL.AppendLine("            if (returnParam == null && inoutParam !=null)");
+            crudDAL.AppendLine("                returnParam = inoutParam;");
+            crudDAL.AppendLine("            ");
+            crudDAL.AppendLine("            return returnParam;");
+            crudDAL.AppendLine("        }");
+            crudDAL.AppendLine("        /// <summary>");
+            crudDAL.AppendLine("        /// assumes that the key column's parameterDirection has been set to output");
+            crudDAL.AppendLine("        /// </summary>");
+            crudDAL.AppendLine("        /// <param name=\"cmd\"></param>");
+            crudDAL.AppendLine("        /// <returns></returns>");
+            crudDAL.AppendLine("        public static Guid RunCmdReturn_Guid(SqlCommand cmd){");
+            crudDAL.AppendLine("            Guid result = new Guid();");
+            crudDAL.AppendLine("            SqlParameter returnParam = GetOutputParameter(cmd.Parameters);");
+            crudDAL.AppendLine("");
+            crudDAL.AppendLine("            if (cmd.Connection == null)");
+            crudDAL.AppendLine("                cmd.Connection = new SqlConnection(ConnString);");
+            crudDAL.AppendLine("            if (cmd.Connection.State == ConnectionState.Closed)");
+            crudDAL.AppendLine("                cmd.Connection.Open();");
+            crudDAL.AppendLine("");
+            crudDAL.AppendLine("            using (SqlDataReader r = cmd.ExecuteReader(CommandBehavior.CloseConnection))");
+            crudDAL.AppendLine("            {");
+            crudDAL.AppendLine("                if (returnParam != null && returnParam.Value != DBNull.Value)");
+            crudDAL.AppendLine("                    result = (Guid)returnParam.Value;");
+            crudDAL.AppendLine("                r.Close();");
+            crudDAL.AppendLine("            }");
+            crudDAL.AppendLine("            cmd.Dispose();");
+            crudDAL.AppendLine("");
+            crudDAL.AppendLine("            return result;");
+            crudDAL.AppendLine("        }");
+            crudDAL.AppendLine("");
+            crudDAL.AppendLine("        public static void RunActionCmd(SqlCommand cmd)");
+            crudDAL.AppendLine("        {");
+            crudDAL.AppendLine("            if (cmd.Connection == null)");
+            crudDAL.AppendLine("                cmd.Connection = new SqlConnection(ConnString);");
+            crudDAL.AppendLine("            if (cmd.Connection.State == ConnectionState.Closed)");
+            crudDAL.AppendLine("                cmd.Connection.Open();");
+            crudDAL.AppendLine("            cmd.ExecuteNonQuery();");
+            crudDAL.AppendLine("            cmd.Dispose();");
+            crudDAL.AppendLine("        }");
+            crudDAL.AppendLine("        public static SqlDataReader RunCMDGetDataReader (SqlCommand cmd)");
+            crudDAL.AppendLine("        {");
+            crudDAL.AppendLine("            SqlDataReader result;");
+            crudDAL.AppendLine("            if (cmd.Connection == null)");
+            crudDAL.AppendLine("                cmd.Connection = new SqlConnection(ConnString);");
+            crudDAL.AppendLine("            if (cmd.Connection.State == ConnectionState.Closed)");
+            crudDAL.AppendLine("                cmd.Connection.Open();");
+            crudDAL.AppendLine("            try");
+            crudDAL.AppendLine("            {");
+            crudDAL.AppendLine("                result = cmd.ExecuteReader(CommandBehavior.CloseConnection);");
+            crudDAL.AppendLine("            }");
+            crudDAL.AppendLine("            catch (Exception ex)");
+            crudDAL.AppendLine("            {");
+            crudDAL.AppendLine("                throw ex;");
+            crudDAL.AppendLine("            }");
+            crudDAL.AppendLine("            ");
+            crudDAL.AppendLine("            return result;");
+            crudDAL.AppendLine("        }");
+            crudDAL.AppendLine("");
+            crudDAL.AppendLine("        public static DataSet RunCMDGetDataSet (SqlCommand cmd) {");
+            crudDAL.AppendLine("            DataSet result = new DataSet();");
+            crudDAL.AppendLine("            if (cmd.Connection == null)");
+            crudDAL.AppendLine("                cmd.Connection = new SqlConnection(ConnString);");
+            crudDAL.AppendLine("            if (cmd.Connection.State == ConnectionState.Closed)");
+            crudDAL.AppendLine("                cmd.Connection.Open();");
+            crudDAL.AppendLine("            SqlDataAdapter da = new SqlDataAdapter(cmd);");
+            crudDAL.AppendLine("            da.Fill(result);");
+            crudDAL.AppendLine("            cmd.Dispose();");
+            crudDAL.AppendLine("            return result;");
+            crudDAL.AppendLine("        }");
+            crudDAL.AppendLine("");
+            crudDAL.AppendLine("        /// <summary>");
+            crudDAL.AppendLine("        /// under construction");
+            crudDAL.AppendLine("        /// </summary>");
+            crudDAL.AppendLine("        /// <param name=\"cmd\"></param>");
+            crudDAL.AppendLine("        /// <returns></returns>");
+            crudDAL.AppendLine("        public static string DLookup(SqlCommand cmd)");
+            crudDAL.AppendLine("        {");
+            crudDAL.AppendLine("            if (cmd.Connection == null)");
+            crudDAL.AppendLine("                cmd.Connection = new SqlConnection(ConnString);");
+            crudDAL.AppendLine("            if (cmd.Connection.State == ConnectionState.Closed)");
+            crudDAL.AppendLine("                cmd.Connection.Open();");
+            crudDAL.AppendLine("            string result= cmd.ExecuteScalar().ToString();");
+            crudDAL.AppendLine("            cmd.Dispose();");
+            crudDAL.AppendLine("            return result;");
+            crudDAL.AppendLine("        }");
+            crudDAL.AppendLine("");
+            crudDAL.AppendLine("        /// <summary>gets a string ready for insertion into database by replacing ' with ''</summary>");
+            crudDAL.AppendLine("        public static string StringToDB(string s) {");
+            crudDAL.AppendLine("            return StringToDB(s, SqlDbType.VarChar);");
+            crudDAL.AppendLine("        }");
+            crudDAL.AppendLine("");
+            crudDAL.AppendLine("        public static string StringToDB(string s, SqlDbType typ) {");
+            crudDAL.AppendLine("            string result = s;");
+            crudDAL.AppendLine("            switch (typ)");
+            crudDAL.AppendLine("            {");
+            crudDAL.AppendLine("                case SqlDbType.Bit :");
+            crudDAL.AppendLine("                    if (s.ToLower() ==\"true\" || s.ToLower()==\"yes\")");
+            crudDAL.AppendLine("                        result = \"1\";");
+            crudDAL.AppendLine("                    else ");
+            crudDAL.AppendLine("                         result = \"0\";");
+            crudDAL.AppendLine("                    break;");
+            crudDAL.AppendLine("                case SqlDbType.DateTime:");
+            crudDAL.AppendLine("                case SqlDbType.Date:");
+            crudDAL.AppendLine("                    if (s == DateTime.MinValue.ToString())");
+            crudDAL.AppendLine("                        s = \"Null\";");
+            crudDAL.AppendLine("                    break;");
+            crudDAL.AppendLine("                case SqlDbType.UniqueIdentifier:");
+            crudDAL.AppendLine("                    if (s == new Guid().ToString())");
+            crudDAL.AppendLine("                        s = \"Null\";");
+            crudDAL.AppendLine("                    break;");
+            crudDAL.AppendLine("                default: //SqlDbType.VarChar | SqlDbType.Text ");
+            crudDAL.AppendLine("                    result = s.Replace(\"'\", \"''\");");
+            crudDAL.AppendLine("                    break;");
+            crudDAL.AppendLine("");
+            crudDAL.AppendLine("            }");
+            crudDAL.AppendLine("");
+            crudDAL.AppendLine("            return result;");
+            crudDAL.AppendLine("");
+            crudDAL.AppendLine("     ");
+            crudDAL.AppendLine("        ");
+            crudDAL.AppendLine("        }");
+            crudDAL.AppendLine("");
+            crudDAL.AppendLine("");
+            crudDAL.AppendLine("        ");
+            crudDAL.AppendLine("    }");
+            crudDAL.AppendLine("}");
+            return crudDAL.ToString();
         }
         /// <summary>
         /// Helps to reduce the amount of code it takes to extract data from a dataReader
@@ -450,7 +675,7 @@ namespace CrudGenerator
             sb.AppendLine("using System.Web;");
             sb.AppendLine("using System.Data;");
             sb.AppendLine("using System.Data.SqlClient;");
-            sb.AppendFormat ("namespace {0}.DL {{\r\n", u.UserSettings.NamespaceBL );
+            sb.AppendFormat ("namespace {0} {{\r\n", u.UserSettings.NamespaceDL );
             sb.AppendLine("    public static class DataReaderExtensions {");
             sb.AppendLine("        public static string ToString(this IDataReader reader, string column) {");
             sb.AppendLine("            if (reader[column] != DBNull.Value)");

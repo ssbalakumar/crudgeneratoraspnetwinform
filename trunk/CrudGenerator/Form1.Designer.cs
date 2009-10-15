@@ -52,12 +52,12 @@ namespace CrudGenerator {
             this.label1OutputDir = new System.Windows.Forms.Label();
             this.label1CodeNamespace = new System.Windows.Forms.Label();
             this.label4 = new System.Windows.Forms.Label();
+            this.txtSprocPrefix = new System.Windows.Forms.TextBox();
+            this.label2SprocPrefix = new System.Windows.Forms.Label();
             this.tabControl1 = new System.Windows.Forms.TabControl();
             this.tabPage1SPROCs = new System.Windows.Forms.TabPage();
             this.chbxAddReadByUserId = new System.Windows.Forms.CheckBox();
             this.txtErrorLog = new System.Windows.Forms.TextBox();
-            this.txtSprocPrefix = new System.Windows.Forms.TextBox();
-            this.label2SprocPrefix = new System.Windows.Forms.Label();
             this.label8 = new System.Windows.Forms.Label();
             this.txtSuccessLog = new System.Windows.Forms.TextBox();
             this.label5 = new System.Windows.Forms.Label();
@@ -370,6 +370,25 @@ namespace CrudGenerator {
             this.label4.Text = "Data Layer Namespace";
             this.toolTip1.SetToolTip(this.label4, "Namespace is used for C# and VB Code");
             // 
+            // txtSprocPrefix
+            // 
+            this.txtSprocPrefix.Enabled = false;
+            this.txtSprocPrefix.Location = new System.Drawing.Point(482, 16);
+            this.txtSprocPrefix.Name = "txtSprocPrefix";
+            this.txtSprocPrefix.Size = new System.Drawing.Size(78, 20);
+            this.txtSprocPrefix.TabIndex = 24;
+            this.toolTip1.SetToolTip(this.txtSprocPrefix, "This is not implimented yet");
+            // 
+            // label2SprocPrefix
+            // 
+            this.label2SprocPrefix.AutoSize = true;
+            this.label2SprocPrefix.Location = new System.Drawing.Point(404, 19);
+            this.label2SprocPrefix.Name = "label2SprocPrefix";
+            this.label2SprocPrefix.Size = new System.Drawing.Size(73, 13);
+            this.label2SprocPrefix.TabIndex = 22;
+            this.label2SprocPrefix.Text = "SPROC Prefix";
+            this.toolTip1.SetToolTip(this.label2SprocPrefix, "This is not implimented yet");
+            // 
             // tabControl1
             // 
             this.tabControl1.Controls.Add(this.tabPage1SPROCs);
@@ -422,25 +441,6 @@ namespace CrudGenerator {
             this.txtErrorLog.ScrollBars = System.Windows.Forms.ScrollBars.Vertical;
             this.txtErrorLog.Size = new System.Drawing.Size(658, 213);
             this.txtErrorLog.TabIndex = 20;
-            // 
-            // txtSprocPrefix
-            // 
-            this.txtSprocPrefix.Enabled = false;
-            this.txtSprocPrefix.Location = new System.Drawing.Point(482, 16);
-            this.txtSprocPrefix.Name = "txtSprocPrefix";
-            this.txtSprocPrefix.Size = new System.Drawing.Size(78, 20);
-            this.txtSprocPrefix.TabIndex = 24;
-            this.toolTip1.SetToolTip(this.txtSprocPrefix, "This is not implimented yet");
-            // 
-            // label2SprocPrefix
-            // 
-            this.label2SprocPrefix.AutoSize = true;
-            this.label2SprocPrefix.Location = new System.Drawing.Point(404, 19);
-            this.label2SprocPrefix.Name = "label2SprocPrefix";
-            this.label2SprocPrefix.Size = new System.Drawing.Size(73, 13);
-            this.label2SprocPrefix.TabIndex = 22;
-            this.label2SprocPrefix.Text = "SPROC Prefix";
-            this.toolTip1.SetToolTip(this.label2SprocPrefix, "This is not implimented yet");
             // 
             // label8
             // 
@@ -615,13 +615,13 @@ namespace CrudGenerator {
             // checkBox1GuidIsCrudParam
             // 
             this.checkBox1GuidIsCrudParam.AutoSize = true;
-            this.checkBox1GuidIsCrudParam.Checked = true;
-            this.checkBox1GuidIsCrudParam.CheckState = System.Windows.Forms.CheckState.Checked;
             this.checkBox1GuidIsCrudParam.Location = new System.Drawing.Point(59, 94);
             this.checkBox1GuidIsCrudParam.Name = "checkBox1GuidIsCrudParam";
             this.checkBox1GuidIsCrudParam.Size = new System.Drawing.Size(253, 17);
             this.checkBox1GuidIsCrudParam.TabIndex = 1;
             this.checkBox1GuidIsCrudParam.Text = "userId Guid is a parameter for all crud operations";
+            this.toolTip1.SetToolTip(this.checkBox1GuidIsCrudParam, "this is for to be used when you plan on filtering data from your stored procedure" +
+                    "s based on the userId requesting the data");
             this.checkBox1GuidIsCrudParam.UseVisualStyleBackColor = true;
             // 
             // checkBox1OverWriteExisting

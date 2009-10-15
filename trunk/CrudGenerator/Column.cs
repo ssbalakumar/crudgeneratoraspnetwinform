@@ -72,12 +72,24 @@ namespace CrudGenerator {
             
             }
         }
+
+        /// <summary>
+        /// Attempts to get identity column if one is present, otherwise gets primary key column
+        /// </summary>
+        /// <param name="columns"></param>
+        /// <returns></returns>
         public static Column GetIdentityColumn(List<Column> columns)
         {
-            foreach (Column column in columns)
+            foreach (Column c in columns)
             {
-                if (column.IsIdentity)
-                    return column;
+                if (c.IsIdentity)
+                    return c;
+            }
+
+            //if there is no identity column... look for primary key column
+            foreach (Column c in columns) {
+                if (c.IsPrimaryKey)
+                    return c;
             }
             return null;
         }
