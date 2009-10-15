@@ -20,8 +20,8 @@ namespace CrudGenerator.Util
         public bool TrustedConnection;
         public string DbUsername;
         public string DbPassword;
+        
         private string _outputDirectory;
-
         public string OutputDirectory
         {
             get { return _outputDirectory; }
