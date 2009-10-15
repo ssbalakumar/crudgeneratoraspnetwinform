@@ -13,6 +13,12 @@ As I make some changes and assumptions, I will add them here.
     # +apply to sql
     # +apply to c#
 
+==SPROC CRUD GENERATOR v1.0.6==
+===Oct. 15, 2009===
+  * Added a data access layer to take care of all communication with the database
+  * Enhanced the dataReader extension methods by adding a ToChar and ToBool function which takes one parameter to be converted to boolean.
+  * Bug Fix: Loading a saved session now makes sets the option check boxes toggle accordingly.
+
 ==SPROC CRUD GENERATOR v1.0.5==
   * Added support for varchar(max)
   * fixed column size issues with nvarchar.  This was tested against SQLServer 2008, where the column size was reporting as length 200 for nvarchar(100).
