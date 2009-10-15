@@ -55,7 +55,10 @@ namespace CrudGenerator {
         public SqlDbType SqlDbTypeOfColumn {
             get {
                 if (_sqlDbTypeOfColumn != SqlDbType.Structured ) return _sqlDbTypeOfColumn;
-                string sqlDbTypeFriendlyStr = dataType.Substring(0, 1).ToUpper() + dataType.Substring(1);
+                string sqlDbTypeFriendlyStr = dataType;
+                //make the sqlDbTypeFriendlyStr  be PascalCased (first character capitalized
+                if (!string.IsNullOrEmpty(dataType))
+                    sqlDbTypeFriendlyStr = dataType.Substring(0, 1).ToUpper() + dataType.Substring(1);
                 sqlDbTypeFriendlyStr = sqlDbTypeFriendlyStr.Replace("int", "Int").Replace("money", "Money").Replace("char", "Char");
                 sqlDbTypeFriendlyStr = sqlDbTypeFriendlyStr.Replace("Uniqueidentifier", "UniqueIdentifier");
                 sqlDbTypeFriendlyStr = sqlDbTypeFriendlyStr.Replace("binary", "Binary").Replace("varChar", "VarChar");
@@ -66,8 +69,8 @@ namespace CrudGenerator {
                     //get string before space
                     sqlDbTypeFriendlyStr = sqlDbTypeFriendlyStr.Substring(0, sqlDbTypeFriendlyStr.IndexOf('('));
                 }
-
-                _sqlDbTypeOfColumn = (SqlDbType)Enum.Parse(typeof(SqlDbType), sqlDbTypeFriendlyStr);
+                if (sqlDbTypeFriendlyStr!="")
+                    _sqlDbTypeOfColumn = (SqlDbType)Enum.Parse(typeof(SqlDbType), sqlDbTypeFriendlyStr);
                 return _sqlDbTypeOfColumn;
             
             }

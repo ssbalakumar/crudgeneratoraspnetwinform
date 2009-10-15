@@ -27,6 +27,10 @@ namespace CrudGenerator {
             string name = System.Security.Principal.WindowsIdentity.GetCurrent().Name.Replace(".", " ");
             name = name.Substring(name.IndexOf('\\') + 1);
             this.txtAuthor.Text = ToTitleCase(name);
+            Version v = System.Reflection.Assembly.GetExecutingAssembly().GetName().Version;
+            this.Text = string.Format("CRUD Generator v{0}.{1}.{2}", v.Major,v.Minor , v.Build );
+            
+
         }
         #endregion
 
