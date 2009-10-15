@@ -1,14 +1,13 @@
 #summary Changelog for changes in the working copy
+#labels Featured,Phase-Design
 
 = Introduction =
 
 As I make some changes and assumptions, I will add them here.
 
 
-= Details =
-
 ==SPROC CRUD GENERATOR (Development version)==
-
+I will be putting unreleased changes here.  Nothing for today.
 
 ==SPROC CRUD GENERATOR v1.0.6==
 ===Oct. 15, 2009===
