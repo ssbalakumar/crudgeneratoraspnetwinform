@@ -153,12 +153,13 @@ namespace CrudGenerator
             Column identityCol = Column.GetIdentityColumn(_cols);
             if (identityCol == null){ 
                 identityCol = new Column();
+                identityCol.DataType = "Int";
                 identityCol.Name = "NoIdentityColumnInTable_NeedManualSetup";
             }
 
 
 
-            create = string.Format("\tpublic {0} Create(Guid userId){\r\n", identityCol.GetASPNetDataType())
+            create = string.Format("\tpublic {0} Create(Guid userId){{\r\n", identityCol.GetASPNetDataType())
                 + string.Format("\t\t return {0}Data.Create(this,userId);", _className   )
                 + "\t}\r\n";
 
@@ -177,14 +178,10 @@ namespace CrudGenerator
             delete = "\tpublic bool Delete(Guid userId){\r\n"
                 + string.Format("\t\t return {0}Data.Delete(this, userId);\r\n", _className)
                 + "\t}\r\n";
-    
-            Column identity = Column.GetIdentityColumn(_cols);
-            if (identity == null){
-                identity = new Column();
-                identity.Name = "NoIdentityColumn";
-            }
-            delete = string.Format("\tpublic static bool Delete(int {0},Guid userId){{\r\n", identity.Name )
-                + string.Format("\t\t return {0}Data.Delete({1}, userId);\r\n", _className, identity.Name)
+
+
+            delete = string.Format("\tpublic static bool Delete(int {0},Guid userId){{\r\n", identityCol.Name)
+                + string.Format("\t\t return {0}Data.Delete({1}, userId);\r\n", _className, identityCol.Name)
                 + "\t}\r\n";
             result.Append(create);
             result.Append(retrieveAll);
@@ -204,6 +201,7 @@ namespace CrudGenerator
             if (identityCol == null)
             {
                 identityCol = new Column();
+                identityCol.DataType = "Int"; //default return data type
                 identityCol.Name = "NoIdentityColumnInTable_NeedManualSetup";
             }
             crudData.Append("\t///<summary>returns the id of the item which was just created</summary>\r\n"
@@ -377,7 +375,11 @@ namespace CrudGenerator
         
 
         private string GetInputParamName(Column c) {
-            return c.Name + "in";
+            //make it camel cased
+           string result = (c.Name.Length > 1) ?
+           string.Format("{0}{1}", c.Name.Substring(0, 1).ToLower(), c.Name.Substring(1)) :
+             c.Name.ToLower();
+            return result;
         }
         private string GetFieldName(Column c) {
             string result = (c.Name.Length > 1)? 
@@ -683,6 +685,10 @@ namespace CrudGenerator
             sb.AppendLine("            else");
             sb.AppendLine("                return \"\";");
             sb.AppendLine("        }");
+            sb.AppendLine("        public static Boolean ToBool(this IDataReader reader, string column)");
+            sb.AppendLine("        {");
+            sb.AppendLine("            return ToBool(reader, column, false);");
+            sb.AppendLine("        }");
             sb.AppendLine("        public static Boolean ToBool(this IDataReader reader, string column, bool defaultValue)");
             sb.AppendLine("        {");
             sb.AppendLine("            if (reader[column] != DBNull.Value)");
@@ -727,6 +733,12 @@ namespace CrudGenerator
             sb.AppendLine("            }");
             sb.AppendLine("            else");
             sb.AppendLine("                return DateTime.MinValue;");
+            sb.AppendLine("        }");
+            sb.AppendLine("        public static Char ToChar(this IDataReader reader, string column) {");
+            sb.AppendLine("            if (reader[column] != DBNull.Value)");
+            sb.AppendLine("                 return Convert.ToChar(reader[column]);");
+            sb.AppendLine("             else");
+            sb.AppendLine("                 return ' ';");
             sb.AppendLine("        }");
             sb.AppendLine("        //This converts an integer column to the given enum (T)");
             sb.AppendLine("        public static T ToEnum<T>(this IDataReader reader, string column)");
