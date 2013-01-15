@@ -1,6 +1,6 @@
 ﻿
-Microsoft Visual Studio Solution File, Format Version 10.00
-# Visual Studio 2008
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio 2012
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CrudGenerator", "CrudGenerator\CrudGenerator.csproj", "{075954DB-9DB0-4FB2-BBEF-F41DE49CFCBA}"
 EndProject
 Global
